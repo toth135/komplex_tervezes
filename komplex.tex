@@ -111,32 +111,36 @@ y(t) &= y_0 + |R| \cdot \sin \dfrac{v \cdot t}{|R|}.
 
 \section{Útvonal meghatározása az eltelt idő függvényében}
 
-\phantom{asd}  $\vec{v}$ \in \mathbb{R} \hspace{0.5cm} -> \hspace{0.5cm} \vec{v} (t) \colon \mathbb{R} &\to \mathbb{R}^2 \\ 
+$$
+\vec{v} \in \mathbb{R} \hspace{0.5cm}
+\quad \rightarrow \quad
+\vec{v} (t) \colon \mathbb{R} \to \mathbb{R}^2
+$$
 
-Elfőrdulás:  \varphi (t) \hspace{0.5cm} -> \hspace{0.5cm} \vec{v} (t) = \begin{bmatrix} \cos(\varphi(t)) \\ \sin(\varphi(t)) \end{bmatrix} 
-\vspace{8}
+Elfordulás:
+$$
+\varphi (t) \hspace{0.5cm} \rightarrow \hspace{0.5cm} \vec{v} (t) =
+\begin{bmatrix}
+\cos(\varphi(t)) \\
+\sin(\varphi(t))
+\end{bmatrix}
+$$
 
 $ \vec{x_0} $ : kezdőpozíció
-\vspace{5}
 
 Egy egységnyi idő elteltével az irány: $ \vec{x} (t_1) = \vec{x_0} + \displaystyle\int_{t_0}^{t_1} \vec{v} (t) dt $
 
 Általános alak:  $ \vec{x} (t) = \vec{x_0} + \displaystyle\int_{t_0}^{t} \vec{v} (u) du $
-\vspace{5}
 
+$$
 \begin{bmatrix} x_1 \\ y_1 \end{bmatrix} = \begin{bmatrix} x_0 \\ y_0 \end{bmatrix} + \displaystyle\int_{t_0}^{t_1} \begin{bmatrix} \cos(\varphi(t)) \\ \sin(\varphi(t)) \end{bmatrix} dt
-\vspace{8}
+$$
 
 Külön a két vektort leintegráljuk:
-\vspace{5}
 
-$ x_1 = x_0 + \displaystyle\int_{t_0}^{t_1} \cos(\varphi(t)) dt $
-\vspace{5}
-
-$ y_1 = y_0 + \displaystyle\int_{t_0}^{t_1} \cos(\varphi(t)) dt $
-
-
-
-
+\begin{align*}
+x_1 &= x_0 + \displaystyle\int_{t_0}^{t_1} \cos(\varphi(t)) \; \mathrm{d}t \\
+y_1 &= y_0 + \displaystyle\int_{t_0}^{t_1} \sin(\varphi(t)) \; \mathrm{d}t \\
+\end{align*}
 
 \end{document}
