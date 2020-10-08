@@ -1,30 +1,102 @@
 \Chapter{Koncepció}
 
-\Section{A fejezet célja}
+\Section{Kétkerekű modell kanyarodási íve}
 
-Ez a fejezet még nem a saját eredményekkel foglalkozik, hanem bemutatja, mi a problémakör, milyen módszerekkel, milyeneredményeket sikerült elérni eddig másoknak.
+A kétkerekű (bicikli) modell kanyarodási ívének meghatározása 2 dologtól függ:\newline
+\phantom{asd} - a tengelytávolságtól (w),\newline
+\phantom{asd} - az első kerék kanyarodási szögétől ($\alpha$).\newline
+Az első és hátsó kerekek is egy-egy körpályát fognak követni azonos középponttal. Az irány mindig merőleges a sugárra.
 
-A hivatkozások jelentős része ehhez a fejezethez szokott kötődni.
-(Egy hivatkozás például így néz ki \cite{coombs1987markup}.)
-Itt lehet bemutatni a hasonló alkalmazásokat.
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.5]{images/two_wheels_rad.png}
+\caption{Kétkerekű jármű kanyarodási íve}
+\label{fig:two_wheels_rad}
+\end{figure}
 
-\Section{Tartalom és felépítés}
+Az ábrán R az első kerékhez tartozó sugár, r pedig a hátsó kerékhez.\newline
+Az első kerék pályája: $\sin\alpha$ = $\cfrac{w}{R}$ \hspace{5mm}---> \hspace{5mm} $R$ = $\cfrac{w}{\sin\alpha}$ \newline
+A hátsó kerék pályája: $\tan\alpha$ = $\cfrac{w}{r}$ \hspace{5mm}---> \hspace{5mm} $r$ = $\cfrac{w}{\tan\alpha}$
+\newpage
 
-A fejezet tartalma témától függően változhat. Az alábbiakat attól függően különböző arányban tartalmazhatják.
-\begin{itemize}
-\item Irodalomkutatás. Amennyiben a dolgozat egy módszer kidolgozására, kifejlesztésére irányul, akkor itt lehet részletesen végignézni (módszertani vagy időrendi bontásban), hogy az eddigiekben milyen eredmények születtek a témakörben.
-\item Technológia. Mivel jellemzően kutatásról vagy szoftverfejlesztésről van szó, ezért annak a jellemző elemeit, technikai részleteit itt kell bemutatni.
-Ez tehát egy módszeres bevezetés ahhoz, hogy ha valaki nem jártas a témakörben, akkor tudja, hogy a dolgozat milyen aktuálisan elérhető eredményeket, eszközöket használt fel.
-\item Piackutatás. Bizonyos témáknál új termék vagy szolgáltatás kifejlesztése a cél.
-Ekkor érdemes annak alaposan utánanézni, hogy aktuálisan milyen eszközök érhetők el a piacon.
-Ez szoftverek esetében a hasonló alkalmazások bemutatását, táblázatos formában történő összehasonlítását jelentheti.
-Szerepelhetnek képek és észrevételek a viszonyításként bemutatott alkalmazásokhoz.
-\item Követelmény specifikáció. Külön szakaszban érdemes részletesen kitérni az elkészítendő alkalmazással kapcsolatos követelményekre.
-Ehhez tartozhatnak forgatókönyvek (\textit{scenario}-k).
-A szemléletesség kedvéért lehet hozzájuk képernyőkép vázlatokat is készíteni, vagy a használati eseteket más módon szemléltetni.
-\end{itemize}
+\Section{A jármű matematikai modellje}
 
-\Section{Amit csak említés szintjén érdemes szerepeltetni}
+A négykerekű jármű középpontjának a hátsó tengely középpontját tekintjük. Mivel a kanyarodásnál az első kerekek különböző szögeket zárnak be az első tengellyel, ezért érdemes egy képzeletbeli, az első tengely közepére eső kormányozható kereket megadni. Ennek a jármű irányával bezárt előjeles szögét jelöljük $\alpha$-val. A jármű tengelytávolságát jelöljük $w$-vel, a hátsó tengely hosszát pedig $a$-val (\ref{fig:vehicle}. ábra).
 
-Az olvasóról annyit feltételezhetünk, hogy programozásban valamilyen szinten járatos, és a matematikai alapfogalmakkal sem ebben a dolgozatban kell megismertetni.
-A speciális eszközök, programozási nyelvek, matematikai módszerekk és jelölések persze jó, hogy ha említésre kerülnek, de nem kell nagyon belemenni a közismertnek tekinthető dolgokba.
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.45]{images/vehicle.png}
+\caption{A jármű matematikai modelljének fő paraméterei}
+\label{fig:vehicle}
+\end{figure}
+
+\Section{Első kerekek elfordulási szögének kiszámítása}
+
+Az $\alpha$ szög függvényében külön ki kell számítanunk a jármű bal és jobb első kerekének elfordulási szögét.
+Tehát első lépésben határozzuk meg az adott $\alpha$ szög ismeretében a további számításokhoz szükséges sugarat,
+melyet a \ref{fig:turning_vehicle}. ábrán R jelöl. Ez a kanyarodási sugár, melyet a jármű középvonalához mérünk. Az ehhez szükséges képlet:\vspace{2mm}
+$R$ = $\dfrac{w}{\text{tg} \alpha}$ \vspace{5mm}
+
+Továbbiakban a jelölések ugyanazok, az első kerekeket tekintve pedig $\alpha\textsubscript{1}$ a belső, $\alpha\textsubscript{2}$ pedig a külső kerék elfordulási szögét jelöli. 
+A jármű tengelytávolsága, valamint szélessége, és a sugár ismeretében ezen két szög a következőképpen számítható ki:\newline\
+$\alpha\textsubscript{1}$ = $\text{arctan}\Bigg(\cfrac{w}{R-\frac{a}{2}}\Bigg)$ \hspace{1cm} $\alpha\textsubscript{2}$ = $\text{arctan}\Bigg(\cfrac{w}{R+\frac{a}{2}}\Bigg)$
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.5]{images/turning_vehicle.png}
+\caption{Első kerekek elfordulási szögei}
+\label{fig:turning_vehicle}
+\end{figure}
+
+
+% TODO: Részletesen leírni ezek számítását!
+
+\Section{Pozíció számítása rögzített $\alpha$ mellett}
+
+A rögzített $\alpha$ szög, és adott sebesség mellett ki kell tudnunk számolni, hogy adott $(x_0, y_0)$ kiindulópontból indulva a jármű milyen pozícióba fog kerülni $t$ idő elteltével. Az $\alpha$ szög függvényében az alábbi módon számolhatjuk ki annak a képzeletbeli körnek a sugarát ($R$), amelyen a jármű majd kanyarodni fog:
+\[
+R = \dfrac{w}{\text{tg} \alpha},
+\]
+ahol a $w$ a jármű tengelyei közötti távolságot jelöli.
+
+Tegyük fel, hogy a jármű sebessége $v$. Ekkor $t$ idő függvényében a jármű pozícióját az alábbi formában számolhatjuk:
+\begin{align*}
+x(t) &= x_0 + R - R \cdot \cos \dfrac{v \cdot t}{|R|}, \\
+y(t) &= y_0 + |R| \cdot \sin \dfrac{v \cdot t}{|R|}.
+\end{align*}
+
+\Section{Útvonal meghatározása az eltelt idő függvényében}
+
+$$
+\vec{v} \in \mathbb{R} \hspace{0.5cm}
+\quad \rightarrow \quad
+\vec{v} (t) \colon \mathbb{R} \to \mathbb{R}^2
+$$
+
+Elfordulás:
+$$
+\varphi (t) \hspace{0.5cm} \rightarrow \hspace{0.5cm} \vec{v} (t) =
+\begin{bmatrix}
+\cos(\varphi(t)) \\
+\sin(\varphi(t))
+\end{bmatrix}
+$$
+
+$ \vec{x_0} $ : kezdőpozíció
+
+Egy egységnyi idő elteltével az irány: $ \vec{x} (t_1) = \vec{x_0} + \displaystyle\int_{t_0}^{t_1} \vec{v} (t) dt $
+
+Általános alak:  $ \vec{x} (t) = \vec{x_0} + \displaystyle\int_{t_0}^{t} \vec{v} (u) du $
+
+$$
+\begin{bmatrix} x_1 \\ y_1 \end{bmatrix} = \begin{bmatrix} x_0 \\ y_0 \end{bmatrix} + \displaystyle\int_{t_0}^{t_1} \begin{bmatrix} \cos(\varphi(t)) \\ \sin(\varphi(t)) \end{bmatrix} dt
+$$
+
+Külön a két vektort leintegráljuk:
+
+\begin{align*}
+x_1 &= x_0 + \displaystyle\int_{t_0}^{t_1} \cos(\varphi(t)) \; \mathrm{d}t \\
+y_1 &= y_0 + \displaystyle\int_{t_0}^{t_1} \sin(\varphi(t)) \; \mathrm{d}t \\
+\end{align*}
+
