@@ -29,7 +29,7 @@ def generate_random_angles(number_of_turns):
     return random_angles
 
 
-rand_angles = generate_random_angles(5)
+rand_angles = generate_random_angles(30)
 print(rand_angles)
 
 # Try to append evenly spaced numbers between 2 angles
@@ -87,7 +87,7 @@ x_path = calc_x_path(0, rand_angles)
 y_path = calc_y_path(0, rand_angles)
 
 
-print(evenly_spaced_numbers(rand_angles))
+#print(evenly_spaced_numbers(rand_angles))
 print(x_path)
 print(y_path)
 
