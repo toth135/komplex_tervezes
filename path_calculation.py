@@ -19,7 +19,7 @@ steer_angles = [-5, 12, 13, 8, 4, 0, -4, -6, -8, -10, -12, -10, -8, -6,
 #                  (2, 22), (3, 13), (8, 3), (6, -12)]
 
 
-def generate_random_angles(number_of_turns):
+def generate_random_angles_absolute(number_of_turns):
     random_angles = []
     for i in range(number_of_turns):
         # time = random.randint(1, 8)
@@ -29,67 +29,63 @@ def generate_random_angles(number_of_turns):
     return random_angles
 
 
-rand_angles = generate_random_angles(30)
-print(rand_angles)
+def generate_random_angles_relative(number_of_turns):
+    rel_angles = []
+    angles = []
+    for i in range(number_of_turns):
+        angle = random.randint(-15, 15)
+        angles.append(angle)
+    for a in range(len(angles)):
+        # first generated number is the same in both cases (absolute-relative)
+        if a == 0:
+            rel_angles.append(angles[0])
+        else:
+            rel_angles.append(angles[a])
+            rel_angles[a] = angles[a] + rel_angles[a-1]
+    # printing absolute random angles to check if relatives are correct
+    print('random angles: ', angles)
+    return rel_angles
 
-# Try to append evenly spaced numbers between 2 angles
+
+# calling the angle generating functions, parameter: number of turns
+rand_angles_abs = generate_random_angles_absolute(30)
+rand_angles_rel = generate_random_angles_relative(30)
+
+# printing relative angles under absolute
+print('relative random angles: ', rand_angles_rel, '\n')
+
+
+# TODO: append evenly spaced numbers between 2 angles
 # b = []
 # print(type(b))
-
-
 def evenly_spaced_numbers(angles):
     arr = []
     for i in range(len(angles)):
         arr.append(np.linspace(angles[i], angles[i+1], num=5))
     return arr
 
-"""
-    - How to position barriers?
-    - Function that decides if there was collision
-        => Recoordinate the barriers in separate class or function
-    - New function or class for optimization process? 
-"""
 
-
-# not in use, 2 functions for position x and y
 def calc_path(pos_x, pos_y, steering_angles):
     path = []
-    for ti, deg in steering_angles:
-        pos_x = pos_x + math.cos(math.radians(deg)) * ti
-        pos_y = pos_y + math.sin(math.radians(deg)) * ti
-        path.append([(pos_x, pos_y)])
+    # time including: time, deg
+    for deg in steering_angles:
+        pos_x = pos_x + math.cos(math.radians(deg))  # *time || *(v*t)
+        pos_y = pos_y + math.sin(math.radians(deg))  # *time || *(v*t)
+        path.append((pos_x, pos_y))
     return path
 
 
-def calc_x_path(pos_x, steering_angles):
-    path_x = []
-    for d in steering_angles:
-        pos_x = pos_x + math.cos(math.radians(d))  # *(v*t)
-        path_x.append(pos_x)
-    return path_x
+random_absolute_path = calc_path(0, 0, rand_angles_abs)
+random_relative_path = calc_path(0, 0, rand_angles_rel)
 
+# print(evenly_spaced_numbers(rand_angles_abs))
 
-def calc_y_path(pos_y, steering_angles):
-    path_y = []
-    for d in steering_angles:
-        pos_y = pos_y + math.sin(math.radians(d))  # *(v*t)
-        path_y.append(pos_y)
-    return path_y
-
-"""
-    - how to include speed and time to path calculation
-    - how will the trajectory change by that
-    - creating barriers (by rectangles)
-"""
-
-#path = calc_path(0, 0, steer_angles2)
-x_path = calc_x_path(0, rand_angles)
-y_path = calc_y_path(0, rand_angles)
-
-
-#print(evenly_spaced_numbers(rand_angles))
-print(x_path)
-print(y_path)
+# printing the generated path under each other for better visibility
+# using zip to get x and y values from the generated list
+print(list(zip(*random_absolute_path))[0])
+print(list(zip(*random_absolute_path))[1])
+print(list(zip(*random_relative_path))[0])
+print(list(zip(*random_relative_path))[1])
 
 # Test print out
 # print(x_path[:, 0])
@@ -104,8 +100,15 @@ plt.gca().add_patch(rectangle2)
 rectangle3 = plt.Rectangle((36.5, 0.7), 6, 0.5, fc='blue', ec='red')
 plt.gca().add_patch(rectangle3)
 
+# coordinates
+x_random = list(zip(*random_absolute_path))[0]
+y_random = list(zip(*random_absolute_path))[1]
+x_random_relative = list(zip(*random_relative_path))[0]
+y_random_relative = list(zip(*random_relative_path))[1]
+
 # Plot the path
-plt.plot(x_path, y_path, 'r')
+plt.plot(x_random, y_random, 'r')
+plt.plot(x_random_relative, y_random_relative, 'black')
 plt.show()
 
 
@@ -121,7 +124,7 @@ def calc_path2(start_position, steer_angles2):
 
     for i in range(len(times)):
         # Test print out
-        #print(times[i], angles[i])
+        # print(times[i], angles[i])
         new_x_position = start_position[0]  # + integral goes here...
 
 
@@ -130,3 +133,14 @@ def calc_path2(start_position, steer_angles2):
 '''
 # calc_path(start_position, steer_angles, time)
 # calc_path2(start_position, steer_angles2)
+
+"""
+    - How to position barriers?
+    - Function that decides if there was collision
+        => Re-coordinate the barriers in separate class or function
+    - New function or class for optimization process? 
+
+    - how to include speed and time to path calculation
+    - how will the trajectory change by that
+    - creating barriers (by rectangles)
+"""
