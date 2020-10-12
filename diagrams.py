@@ -1,8 +1,10 @@
-import python.Vehicle as vehicle
+import python.path_calculation as path_calc
 import matplotlib.pyplot as plt
 
-print(vehicle.steer_angles)
-plt.plot(vehicle.a)
+plt.plot(path_calc.rand_angles_abs, 'r')
+plt.ylabel('steering angles')
+plt.xlabel('time')
+plt.plot(path_calc.rand_angles_rel, 'black')
 plt.ylabel('steering angles')
 plt.xlabel('time')
 plt.show()
