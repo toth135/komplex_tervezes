@@ -43,8 +43,38 @@ def generate_random_angles_relative(number_of_turns):
             rel_angles.append(angles[a])
             rel_angles[a] = angles[a] + rel_angles[a-1]
     # printing absolute random angles to check if relatives are correct
-    print('random angles: ', angles)
+    print('\nrandom angles: ', angles)
     return rel_angles
+
+
+# todo: convert it to one list, make it work properly
+def generate_evenly_spaced_randnums(number_of_turns):
+    random_angles = []
+    for i in range(number_of_turns):
+        angle = random.randint(-15, 15)
+        random_angles.append(angle)
+    print('random_evenly:', random_angles)
+    for i in range(len(random_angles)):
+        if i > 0:
+            # random_angles.append(np.arange(random_angles[0], random_angles[i]))
+            # 2 possible solution but unable to convert them into 1 normal list to calculate with them..
+            # linspace skips 1 value between every item in list
+            difference = abs(random_angles[i] - random_angles[i-1])
+            random_angles.append(np.linspace(random_angles[i-1], random_angles[i], difference, dtype=int))
+    return random_angles
+
+
+def generate_random_angles_gauss(number_of_turns):
+    random_angles = []
+    for i in range(number_of_turns):
+        angle = np.random.normal(10, 1)
+        random_angles.append(angle)
+    return random_angles
+
+
+even_list = generate_evenly_spaced_randnums(5)
+print('random_evenly_linspace:', even_list)
+# print('gauss: ', generate_random_angles_gauss(10))
 
 
 # calling the angle generating functions, parameter: number of turns
@@ -54,15 +84,17 @@ rand_angles_rel = generate_random_angles_relative(30)
 # printing relative angles under absolute
 print('relative random angles: ', rand_angles_rel, '\n')
 
-
-# TODO: append evenly spaced numbers between 2 angles
+'''
 # b = []
 # print(type(b))
 def evenly_spaced_numbers(angles):
     arr = []
     for i in range(len(angles)):
-        arr.append(np.linspace(angles[i], angles[i+1], num=5))
+        arr.append(np.linspace(angles[i], angles[i-1], num=5))
     return arr
+'''
+
+# print(evenly_spaced_numbers(rand_angles_abs))
 
 
 def calc_path(pos_x, pos_y, steering_angles):
@@ -78,14 +110,13 @@ def calc_path(pos_x, pos_y, steering_angles):
 random_absolute_path = calc_path(0, 0, rand_angles_abs)
 random_relative_path = calc_path(0, 0, rand_angles_rel)
 
-# print(evenly_spaced_numbers(rand_angles_abs))
 
 # printing the generated path under each other for better visibility
 # using zip to get x and y values from the generated list
-print(list(zip(*random_absolute_path))[0])
-print(list(zip(*random_absolute_path))[1])
-print(list(zip(*random_relative_path))[0])
-print(list(zip(*random_relative_path))[1])
+print('x_absolute: ', list(zip(*random_absolute_path))[0])
+print('y absolute: ', list(zip(*random_absolute_path))[1])
+print('\nx relative: ', list(zip(*random_relative_path))[0])
+print('y relative: ', list(zip(*random_relative_path))[1])
 
 # Test print out
 # print(x_path[:, 0])
