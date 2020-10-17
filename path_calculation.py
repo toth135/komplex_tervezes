@@ -2,6 +2,7 @@ import numpy as np
 import math
 from matplotlib import pyplot as plt
 import random
+from matplotlib.cbook import flatten
 
 '''
 (time,angle) pairs
@@ -47,21 +48,20 @@ def generate_random_angles_relative(number_of_turns):
     return rel_angles
 
 
-# todo: convert it to one list, make it work properly
 def generate_evenly_spaced_randnums(number_of_turns):
     random_angles = []
     for i in range(number_of_turns):
         angle = random.randint(-15, 15)
         random_angles.append(angle)
-    print('random_evenly:', random_angles)
+    print('random_for_evenly:', random_angles)
+    spaced_random_angles = []
     for i in range(len(random_angles)):
         if i > 0:
             # random_angles.append(np.arange(random_angles[0], random_angles[i]))
-            # 2 possible solution but unable to convert them into 1 normal list to calculate with them..
-            # linspace skips 1 value between every item in list
+            # linspace skips some values between every item in list
             difference = abs(random_angles[i] - random_angles[i-1])
-            random_angles.append(np.linspace(random_angles[i-1], random_angles[i], difference, dtype=int))
-    return random_angles
+            spaced_random_angles.append(np.linspace(random_angles[i-1], random_angles[i], difference, dtype=int))
+    return list(flatten(spaced_random_angles))
 
 
 def generate_random_angles_gauss(number_of_turns):
@@ -72,7 +72,7 @@ def generate_random_angles_gauss(number_of_turns):
     return random_angles
 
 
-even_list = generate_evenly_spaced_randnums(5)
+even_list = generate_evenly_spaced_randnums(10)
 print('random_evenly_linspace:', even_list)
 # print('gauss: ', generate_random_angles_gauss(10))
 
@@ -107,8 +107,9 @@ def calc_path(pos_x, pos_y, steering_angles):
     return path
 
 
-random_absolute_path = calc_path(0, 0, rand_angles_abs)
-random_relative_path = calc_path(0, 0, rand_angles_rel)
+random_absolute_path = calc_path(10, 0, rand_angles_abs)
+random_relative_path = calc_path(10, 0, rand_angles_rel)
+evenly_path = calc_path(0, 0, even_list)
 
 
 # printing the generated path under each other for better visibility
@@ -117,6 +118,8 @@ print('x_absolute: ', list(zip(*random_absolute_path))[0])
 print('y absolute: ', list(zip(*random_absolute_path))[1])
 print('\nx relative: ', list(zip(*random_relative_path))[0])
 print('y relative: ', list(zip(*random_relative_path))[1])
+print('\nx evenly_speced_path:', list(zip(*evenly_path))[0])
+print('y evenly_speced_path:', list(zip(*evenly_path))[1])
 
 # Test print out
 # print(x_path[:, 0])
@@ -136,10 +139,13 @@ x_random = list(zip(*random_absolute_path))[0]
 y_random = list(zip(*random_absolute_path))[1]
 x_random_relative = list(zip(*random_relative_path))[0]
 y_random_relative = list(zip(*random_relative_path))[1]
+x_evenly_spaced = list(zip(*evenly_path))[0]
+y_evenly_spaced = list(zip(*evenly_path))[1]
 
 # Plot the path
 plt.plot(x_random, y_random, 'r')
 plt.plot(x_random_relative, y_random_relative, 'black')
+plt.plot(x_evenly_spaced, y_evenly_spaced, 'green')
 plt.show()
 
 
