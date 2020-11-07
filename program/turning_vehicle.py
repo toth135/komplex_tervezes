@@ -1,3 +1,6 @@
+# TODO: This file is deprecated! Move the calculations to Vehicle and Navigator classes!
+# TODO: For experimentation, use Jupyter notebooks!
+
 import math
 
 print("A program kiszámítja a négykerekű jármű első kerekeinek kanyarodási szögeit.")
