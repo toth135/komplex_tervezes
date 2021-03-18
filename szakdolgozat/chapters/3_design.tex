@@ -122,51 +122,145 @@ Itt a generálás módja jóval egyszerűbb, ténylegesen csak egy random szám,
 \label{fig:absolute_path}
 \end{figure}
 
+
 \newpage
-\subsection{Végpontok eloszlása, valószínűségi grafikonok}
+\subsection{Ütközés detektálás véletlen útvonalak esetén}
+Véletlen útvonalak esetén figyelmbe kell vennünk az esetleges akadályokat. Így a generált utak közül csak az lesz megfelelő, ami ezekbe nem ütközik bele. Tároljuk el ezeket mi magunk a programban, így létrehozva a környezetet. 
 
-Ebben az alpontban megvizsgáljuk, hogy különböző paraméterek esetén melyik pozícióba hány alkalommal, illetve milyen valószínűsággel juthatunk el. Legyen az alapértelmezett érték 1000 db generálás. Tehát ennyi útvonalat fognak a függvények meghatározni és kigyűjtöm a végpontok $ x $ és $ y $ koordinátáit 2 külön listába. Ez alapján meghatározható az értékek eloszlása.\\\\
-Első esetben az elfordulások száma 30, kanyarodási szög -35$^{\circ}$, +35$^{\circ}$ közötti, generálás módszere relatív, a kezdőpozíció az origó (0, 0).\\
+\begin{python}
+obstacle1 = (2, 2, 6, 3)
+obstacle2 = (8, 8, 6, 4)
+obstacle3 = (15, 2, 4, 2)
+obstacle4 = (8, -3, 4, 2)
+obstacle5 = (23, -2, 4, 2)
 
-A \ref{fig:relative_x_endpos}. ábrán megfigyelhetjük az adott végpozíciók $ x $ koordinátáinak előfordulását. Az x tengelyen az $ x $ koordináták láthatók, az y tengelyen pedig hogy 1000-ből hányszor fordult elő. A diagramon exponenciális növekedés figyelhető meg, legtöbbször a 25-ös $ x $ koordinátába juthatunk el. Ezt többször is lefuttattam, mindegyiknél hasonló eredmény figyelhető meg, általában 23-27 közötti pontokat érhetünk el legtöbbször. Negatív értékek is megfigyelhetők, ilyenkor fordulatot vesz a jármű és ellenkező irányba halad.\\
+obstacle_list = [obstacle1, obstacle2, obstacle3, obstacle4, obstacle5]
+\end{python}
+Paraméterek: obstacle(x1, y1, szélesség, magasság). Hozzáadjuk egy listához, hogy később azon végigiterálva meg tudjuk állapítani, hogy melyik obstacle objektumnál történt ütközés.
 
-A \ref{fig:relative_y_endpos}. ábrán is ugyanezeket az adatokat figyelhetjük meg, csak az y koordináták esetében. Itt a leggyakoribb értékek a -22 és a +19, de a -8, +8 értékek gyakorisága is hasonló. Itt már nagyobb véletlenszerűség látszódik.\\
+\begin{python}
+def is_in_wall(x, y):
+    collided = False
+    collisions = []
+    for index, obstacle in enumerate(obstacle_list):
+        if obstacle[0] <= x <= (obstacle[0] + obstacle[2])\
+                and obstacle[1] <= y <= (obstacle[1] + obstacle[3]):
+            collisions.append((index, x, y))
+            collided = True
+    return collided, collisions
+\end{python}
+Az előző $ obstacle\_list $ listát végignézve ellenőrizzük, hogy az adott pont az akadály paraméterein belül esik-e. Ha igen, egy hamis változót igazra állítunk, valamint hozzáadjuk az adott pontot egy listához. Itt nem csak az $ x $ és $ y $ koordinátákat adom hozzá, hanem egy $ index $-et is, ami eltárolja, hogy melyik akadály objektumba ütközött az útvonal. Ha hamis, akkor a collided értéke is hamis marad. Visszatérünk két értékkel:
 
-A \ref{fig:relative_x_endpos_density}. és a \ref{fig:relative_y_endpos_density}. grafikonok az előzőek mintájára készült annyi különbséggel, hogy az y tengelyen valószínűségi érték látható.
-\newpage 
+- volt-e ütközés
+
+- az akadályba ütközött pontok listája
+
+\begin{python}
+def calc_path(pos_x, pos_y, steering_angles):
+    path = []
+    collisions = []
+    for deg in steering_angles:
+        pos_x = pos_x + math.cos(math.radians(deg))
+        pos_y = pos_y + math.sin(math.radians(deg))
+        if is_in_wall(pos_x, pos_y)[0]:
+            collisions.append(is_in_wall(pos_x, pos_y)[1])
+        path.append((pos_x, pos_y))
+    return path, collisions
+\end{python}
+A már bemutatott $calc\_path$ függvényt kicsit átalakítva végig tudjuk nézni, hogy az útvonalon volt-e ütközés. Itt a for ciklus belsejében az adott pozíciót behelyettesítjük a függvény paraméterlistájába, és az első visszatérési értéket megadva feltételnek, ha az igaz, akkor hozzáadjuk az akadályba ütközött pontokat egy másik listához, amit a második visszatérési érték ad meg. Az útvonal minden eleme ugyanúgy bekerül a $ path $ listába. Majd szintén két értékkel térünk vissza:
+
+- az útvonallal
+
+- az akadályba ütközött pontokkal
+
+\begin{python}
+collision_list = []
+
+def remove_nesting(nested_list):
+    for i in nested_list:
+        if type(i) == list:
+            remove_nesting(i)
+        else:
+            collision_list.append(i)
+            
+random_relative_path_collisions = calc_path(0, 0, rand_angles_rel)[1]            
+remove_nesting(random_relative_path_collisions)
+\end{python}
+Ezt a függvényt az akadályba ütközött pontok normalizálására hívom meg. Rekurzívan eltávolítja a listából a többi listát (bármennyi lehet egymásba ágyazva), így a későbbiekben egyszerűbben hivatkozhatunk a lista tuple típusú elemeire\\
+($objektum\_index, x, y$). Az útvonal számító metódust meghívva, a második visszatérési értéke adja meg az ütközött pontokat.
+
+\begin{python}
+plt.figure()
+rectangle1 = plt.Rectangle((2, 2), 6, 3, fc='blue', ec='red')
+plt.gca().add_patch(rectangle1)
+rectangle2 = plt.Rectangle((8, 8), 6, 4, fc='blue', ec='red')
+plt.gca().add_patch(rectangle2)
+rectangle3 = plt.Rectangle((15, 2), 4, 2, fc='blue', ec='red')
+plt.gca().add_patch(rectangle3)
+rectangle4 = plt.Rectangle((8, -3), 4, 2, fc='blue', ec='red')
+plt.gca().add_patch(rectangle4)
+rectangle5 = plt.Rectangle((23, -2), 4, 2, fc='blue', ec='red')
+plt.gca().add_patch(rectangle5)
+
+plt.plot(x_random_relative, y_random_relative, 'black')
+plt.xlabel("x coordinates")
+plt.ylabel("y coordinates")
+plt.legend(collision_list, loc='upper left', bbox_to_anchor=(0, 1.17),
+handletextpad=-0.1, handlelength=0)
+plt.savefig('example_nocollision.png')
+plt.show()
+\end{python}
+A listába szervezett akdályokat szemléltetés képpen rajzoljuk ki a területre a \\
+$ matplotlib.patches.Rectangle $ funkciót használva. Majd a $ plot() $ függvénnyel az útvonalat kirajzolni, ha pedig volt ütközés, azt legendként jelenítem meg.\\\\
+Ismét bemutatnék két példa útvonalat, amelyet a hivatkozott kódrészletek segítségével generáltam ezúttal akadályokkal. Néhány futtatás után kaptunk két hasonló útvonalat, az $ y $ végpontnál talán kissé több az eltérés. Ezt minél több próbálkozással (futtatással) lehetne optimalizálni. \\\\
+A \ref{fig:example_nocollision} ábrán az útvonal látható, ahol nem volt ütközés. A \ref{fig:example_collision} ábrán pedig két objektumba is ütközött. Azokat az adatokat látjuk a legendben, ahol történt az ütközés. Az első elem, hogy melyik objektumba, a másik kettő pedig, hogy mely pontokban ütközött $ (x, y) $.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.75]{images/example_nocollision.png}
+\caption{Példa útvonal ütközés nélkül}
+\label{fig:example_nocollision}
+\end{figure}
+
 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.75]{images/relative_x_endpos.png}
-\caption{Elérhető x koordináták eloszlása szám szerint}
-\label{fig:relative_x_endpos}
+\includegraphics[scale=0.75]{images/example_collision.png}
+\caption{Példa útvonal ütközéssel}
+\label{fig:example_collision}
 \end{figure}
 
  
 
+\newpage
+\subsection{Végpontok eloszlása, valószínűségi grafikonok}
+
+Ebben az alpontban megvizsgáljuk, hogy különböző paraméterek esetén melyik pozícióba hány alkalommal, illetve milyen valószínűsággel juthatunk el. Legyen az alapértelmezett érték 10 000 mintaszám, tehát ennyi útvonalat fognak a függvények meghatározni. Kigyűjtöm a végpontok $ x $ és $ y $ koordinátáit 2 külön listába, ez alapján ábrázolható az értékek eloszlása.\\\\
+Alap esetben legyen az elfordulások száma 30, kanyarodási szög -35$^{\circ}$, +35$^{\circ}$ közötti, generálás módszere relatív, a kezdőpozíció az origó (0, 0).\\\\
+Ekkor a \ref{fig:no_obstacles_histogram2d} ábrán a (30, 0) körüli pozíciók a leggyakrabbak, de ugyanúgy gyakori eset például a (-11/+10, 28), melyek 70-70 gyakorisággal fordulnak elő.\\\\
+A \ref{fig:obstacles_histogram2d} ábrán csak azokat a végpontokat látjuk, amikor nem volt egyáltalán ütközés. Ez minden esetben, 10 000 generálásnál 7000-7300 közötti rossz útvonalat számol, tehát átlagosan 2850 jó eredményből készül egy ilyen diagram. Az akadályok a \ref{fig:example_collision} vagy a \ref{fig:example_nocollision} ábrákon látható pozíciókban helyezkednek el ebben az esetben. Azt láthatjuk, hogy a leggyakoribb értékek a (12, -24/-26) pontokban lehetnek, szám szerint nagyjából 25-ször fordulnak elő. Tehát az y tengelyt tekintve inkább negatív irányba vinne minket a módszer, persze a pozitív értékeknél is léteznek útvonalak, de már csak 8-10 vagy kevesebb gyakorisággal. A világoskék színnel jelölt négyzetek is átlagban 10-szer, viszonylag gyakran fordulnak elő.
+
+
+
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.75]{images/relative_y_endpos.png}
-\caption{Elérhető y koordináták eloszlása szám szerint}
-\label{fig:relative_y_endpos}
+\includegraphics[scale=0.75]{images/no_obstacles_histogram2d.png}
+\caption{Elérhető végpontok, ha nincs akadály a pályán}
+\label{fig:no_obstacles_histogram2d}
 \end{figure}
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.75]{images/relative_x_endpos_density.png}
-\caption{Elérhető x koordináták valószínűsége}
-\label{fig:relative_x_endpos_density}
+\includegraphics[scale=0.75]{images/obstacles_histogram2d.png}
+\caption{Elérhető végpontok, ha vannak akadályok a pályán}
+\label{fig:obstacles_histogram2d}
 \end{figure}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.75]{images/relative_y_endpos_density.png}
-\caption{Elérhető y koordináták valószínűsége}
-\label{fig:relative_y_endpos_density}
-\end{figure}
 
 \newpage
+
+\Section{A* algoritmus}
 
 \Section{Gépi tanítás a probléma inverzével}
 
