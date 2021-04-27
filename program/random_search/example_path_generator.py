@@ -8,8 +8,8 @@ obstacle_coordinates = []
 
 def store_obstacle(x1, y1, x2, y2):
     obstacles = []
-    for i in range(x1, x1 + x2):
-        for j in range(y1, y1 + y2):
+    for i in range(x1, (x1 + x2 + 1)):
+        for j in range(y1, (y1 + y2 + 1)):
             obstacles.append((i, j))
     return obstacles
 
@@ -131,5 +131,5 @@ plt.plot(x_random_relative, y_random_relative, 'black')
 plt.xlabel("x coordinates")
 plt.ylabel("y coordinates")
 plt.legend(collision_list, loc='upper left', bbox_to_anchor=(0, 1.17), handletextpad=-0.1, handlelength=0)
-plt.savefig('fig15.png')
+#plt.savefig('fig15.png')
 plt.show()
