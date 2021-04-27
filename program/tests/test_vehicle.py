@@ -13,6 +13,6 @@ class VehicleTest(unittest.TestCase):
         vehicle.speed = 0
         vehicle.steering_angle = 0
         vehicle.drive(10)
-        self.assertEqual(vehicle.position, (0, 0)
+        self.assertEqual(vehicle.position, (0, 0))
 
     # TODO: Test negative time value for driving (with expected ValueError)!
