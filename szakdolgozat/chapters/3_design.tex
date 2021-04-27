@@ -258,10 +258,791 @@ A \ref{fig:obstacles_histogram2d} ábrán csak azokat a végpontokat látjuk, am
 \end{figure}
 
 
-\newpage
-
 \Section{A* algoritmus}
 
-\Section{Gépi tanítás a probléma inverzével}
+Következő lépésben egy olyan megoldást szeretnék bemutatni, amely segítségével bármely pontból eljuthatunk a cél pozícióba, a lehető legkisebb költséggel (jelen esetben a legrövidebb útvonalon).
+Az A* algoritmust implementálva az útvonalkereséshez megkaphatjuk az elvárt eredményt. Ez egy olyan kereső eljárás, amelynek alapja a gráfszerű keresés. Minden koordinátát csomópontnak vesz és a kezdőcsúcsból indulva egyesével fűzi hozzá a csúcsokat összekötő éleket mindaddig, míg el nem éri a terminálási feltételt. Ehhez meg kell határozni egy $ f(n) = g(n) + h(n) $ függvényt, ahol $ n $ mindig a következő csúcs az úton, $ g(n) $ a kezdőcsúcstól az n-ig tartó út költsége, és $ h(n) $ egy heurisztikus függvény, amely a két pont közötti legkisebb távolságot veszi fel értékül. Minden lépésben a legkisebb értékkel rendelkező $ f $ értéket választja.
+\\\\
+Lépésekre bontva a következőképpen írhatjuk le a folyamatot:
+
+\begin{enumerate}
+	\item Egy nyitott listát létrehozunk, majd hozzáadjuk ehhez a kezdőpontot
+	\item Ismételjük a következőket, ha a nyitott lista nem üres:
+	\begin{enumerate}
+		\item Keressük meg a legkisebb $ f $ költségű csomópontot a nyitott listában
+		\item Adjuk hozzá a zárt listához
+		\item Minden szomszédos csomópontnál:
+			\begin{enumerate}
+				\item Ha nem járható, vagy ha a zárt listában van, akkor hagyjuk figyelmen kívül, egyébként a következőket csináljuk:
+					\begin{enumerate}
+						\item Ha nincs a nyitott listában, akkor adjuk hozzá és jelöljük ki a jelenlegi pontot a szülőjének, majd tároljuk el az $ f $, $ g $ és $ h $ költségeit az adott csomópontnak.
+						\item Ha már a nyitott listában van, nézzük meg, hogy ez az útvonal jobb-e a $ g $ értéket vizsgálva. Ha ennek az értéke kisebb, akkor ez egy jobb útvonal az előzőnél és meg kell változtatnunk az előző pont szülőjét a jelenlegire és újra kell számítani az $ f $ és $ g $ értékeket.  
+					\end{enumerate}
+			\end{enumerate}
+	\end{enumerate}
+	\item Akkor állhatunk meg, ha a cél a zárt listához adódik, így megkaptuk a végső koordinátát, vagy ha nem találta meg valamilyen oknál fogva a célt. 
+	\item Végig kell menni céltól a kezdőpontig a pontokon és így kaphatjuk meg az útvonalat
+\end{enumerate}
+
+\textbf{A környezet kialakítása:}
+\\\\
+A célom az volt, hogy egy olyan környezetben tudjam megvalósítani a keresést, amely "végtelen", tehát nincs megadva keret, hogy milyen távolságokba juthatunk el maximum, valamint hogy manuálisan lehessen megadni az akadályok pozícióit és méreteit, ezzel a tesztelést is könnyítve. Ezen kívül maga a környezet lényegében egy Descartes-féle koordináta-rendszer, amelyben a síkban egy $ P $ pont helyzete jól behatárolható $ x $ és $ y $ rendezett számpár alapján. A megjelenítés itt is szintén a matplotlib könyvtár plot() funkciójával fog majd történni.
+
+Létre lehet hozni egy osztályt, amelyet inicializálunk az akadályokkal, ezzel kialakítva a környezetet. Ezeket egy listában tároljuk és ha szeretnénk még hozzáadni akadályokat ugyan úgy az append() funkcióval tehetjük meg. A listának tartalmaznia kell minden koordinátát, ami akadály (tehát a téglalapok keretein belül esőket is). Erre pedig egy másik függvényt hívunk meg, amely for ciklusok segítségével végigiterálva kigyjűt minden pontot az akadályokról. 
+\begin{python}
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+
+
+class AStarPathFinder(object):
+    def __init__(self):
+        self.obstacles = []
+        self.obstacles.append(self.store_obstacle(2, 2, 6, 3))
+        self.obstacles.append(self.store_obstacle(8, 8, 6, 4))
+        self.obstacles.append(self.store_obstacle(15, 2, 4, 2))
+        self.obstacles.append(self.store_obstacle(8, -3, 4, 2))
+        self.obstacles.append(self.store_obstacle(23, -2, 4, 2))
+        
+ 	def store_obstacle(self, x1, y1, width, height):
+        obstacles = []
+        for i in range(x1, (x1 + width + 1)):
+            for j in range(y1, (y1 + height + 1)):
+                obstacles.append((i, j))
+        return obstacles
+\end{python}
+
+\newpage
+
+\textbf{A távolság meghatározása:}\\\\
+A kereső algoritmus alapja, hogy valamilyen módszerrel meg tudjuk határozni a kezdőpont és a végpont közötti távolságot. Ezzel visszakapjuk alapvetően a legrövidebb utat a két pont között. Különböző feltételeket definiálhatunk a mozgással kapcsolatban, így megemlítenék három féle ilyen távolság számítást, amik hatékonyságát a program implementálása során teszteltem.
+\begin{itemize}
+	\item Manhattan távolság\\
+	Egyszerűbb esetekben érdemes alkalmazni, mikor a mozgás csak 4 irányba történhet az adott pontból. \\
+	Képlete: h = abs(start.x - goal.x) + abs(start.y - goal.y)
+	\item Diagonális távolság\\
+	Akkor érdemes használni, mikor 8 irányban tudunk elmozdulni az adott pontból. Jelen esetben ez is használható lenne, de az elvárt eredményhez ez sem teljesen optimális.\\
+	Képlete: h = max( abs(start.x - goal.x), abs(start.y - goal.y) )
+	\item Euklideszi távolság\\
+	Ezt a fajta távolság becslést fogom használni, mivel minden irányban el lehet mozdulni és egy reális útvonalat kaphatunk végeredményként.\\
+	Képlete: h = sqrt( (start.x - goal.x) ** 2 + (start.y - goal.y) ** 2 )
+\end{itemize}
+
+\begin{python}
+    def heuristic(self, start, goal):
+        return math.sqrt(((start[0]) - goal[0]) ** 2 +
+                         ((start[1]) - goal[1]) ** 2)
+\end{python}
+
+A képletek alapján ábrázolt távolságokat a  \ref{fig:distances} képen szemléltetem.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.65]{images/distances.png}
+\caption{Lehetséges távolságok ábrája a képletek alapján}
+\label{fig:distances}
+\end{figure}
+
+\newpage
+
+\textbf{A szomszédos koordináták definiálása}
+\\\\
+A megoldás másik elengedhetetlen funkciója, a szomszédos koordináták meghatározása, azok a pontok, amikből az adott lépésben válaszhatunk. Ez lehetne egyszerűen 4 irány (észak, dél, kelet, nyugat), de esetünkben nem egy labirintus-szerű térképet kell bejárni, hanem egy olyan környezetet, ahol egyedül a lehelyezett akadályokat kell kikerülni, a többi rész pedig szabadon járható. Mivel az algoritmus koordinátánként fogja a lehetőségeket vizsgálni, így az elmozdulás a pontból 8 irányban lehetséges. A \ref{fig:neighbours} ábrán jól látható, hogy az adott koordinátához képest a szomszédokat hogyan kell majd meghatározni a programban.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.60]{images/neighbours.png}
+\caption{Szomszédos koordináták a következő lépés megválasztásához}
+\label{fig:neighbours}
+\end{figure}
+
+Ehhez létre tunuk hozni egy függvényt, ami az aktuális pozíciót megkapja paraméterként. Egy listában eltárolva ezeket a szomszédos pontokat, hozzáadjuk őket egy másik listához, ami az aktuális pozíciót plusz a lehetséges szomszédokat fogja tartalmazni. 
+
+\begin{python}
+	def get_neighbours(self, position):
+        neighbour = []
+
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1),
+                       (1, 1), (-1, 1), (1, -1), (-1, -1)]:
+            x2 = position[0] + dx
+            y2 = position[1] + dy
+            neighbour.append((x2, y2))
+        return neighbour 
+\end{python}
+
+\bigskip
+\bigskip
+
+\textbf{A költség meghatározása:}
+\\\\
+Szükség van egy olyan függvényre is, amely meghatározza a következő pozíció költségét. Ez egyszerűen megoldható, ha minden lépésnek 1 értékű a költsége, viszont ha ez akadályba ütközik, akkor sokkal több. Így biztosan elkerülhető, hogy az algoritmus olyan utat válasszon, ahol akadálynak ütközött.
+\begin{python}
+	 def calc_cost(self, current, next):
+        for obstacle in self.obstacles:
+            if next in obstacle:
+                return 100 because of high cost
+        return 1
+\end{python}
+
+\bigskip
+\bigskip
+
+\textbf{Input ellenőrzés, a kezdő és végpont nem lehet akadályban:}
+\\
+\begin{python}
+	def check_points(self, start, end):
+        for obstacle in self.obstacles:
+            for obs in obstacle:
+                if start == obs:
+                    raise RuntimeError('Start coordinate is inside 
+                    an obstacle!')
+                elif end == obs:
+                    raise RuntimeError('End coordinate is inside
+                    an obstacle!')
+\end{python}
+
+\bigskip
+\bigskip
+
+\textbf{A* keresés implementálása:}
+\\\\
+
+Az elején ellenőrizzük, hogy helyesek-e az a kezdő és végpont inputok, továbbá deklaráljuk és inicializáljuk a változókat.
+\begin{python}
+def a_star_search(start, end, map):
+
+    map.check_points(start, end)
+
+    g = {}  
+    f = {}  
+
+    g[start] = 0
+    f[start] = map.heuristic(start, end)
+
+    closed_nodes = set()
+    opened_nodes = {start}
+    came_from = {}
+\end{python}
+
+\bigskip
+\bigskip
+
+Egy while ciklusba kerülnek az ezután következő utasítások. Meg kell választani azt a koordinátát, amelyik a legkisebb $ f $ értékkel rendelkezik a nyitott listában lévőek közül, majd eltárolni jelenlegi pontnak. 
+\begin{python}
+	while len(opened_nodes) > 0:
+        current = None
+        current_f_score = None
+        for pos in opened_nodes:
+            if current is None or f[pos] < current_f_score:
+                current_f_score = f[pos]
+                current = pos
+
+\end{python}
+
+\bigskip
+\bigskip
+
+Ha elértük a végét, végig kell menni az eddig bejárt pontokon visszafelé, hogy megkapjuk a koordináták listáját. Ezeket egyesével hozzáfűzni a $ path $ listához, majd ha ez készen van, a lista elemeit az ellenkező sorrendben kell venni, hogy ne a végéről kezdődjön. Itt kapjuk meg az egész függvény visszatérési értékeit ami az útvonal, és ennek a költsége.
+\begin{python}
+	if current == end:
+            path = [current]
+            while current in came_from:
+                current = came_from[current]
+                path.append(current)
+            path.reverse()
+            return path, f[end]
+\end{python}
+
+\bigskip
+\bigskip
+
+A nyitott és zárt lista kezelésére folyamatos eltávolítások és hozzáadások szükségesek:
+
+\begin{python}
+	opened_nodes.remove(current)
+        closed_nodes.add(current)
+\end{python}
+
+\bigskip
+\bigskip
+
+A következőkben az algoritmus fő változóinak értékeit fogjuk frissíteni, a szomszédos koordinátákat vizsgálva. Először megnézzük, hogy az adott szomszédos pont már a zárt listában van-e. Ha igen, akkor tovább lépünk, mivel az már fel lett dolgozva. Ha nem, akkor kiszámoltatjuk a költségét és megjelöljük, mint lehetséges következő lépést.\\
+
+Szükséges még megvizsgálni azt is, hogy ha nincs a nyitott listában az adott csomópont. Ilyenkor hozzáadjuk és ha ennek több a költsége, mint az előbb megjelölt lehetséges pontnak, akkor tovább lépünk.\\
+
+Mivel ez olyan ciklusban van, ami az összes szomszédot megvizsgálja, így a végén a legkisebb költségű pontot el lehet tárolni és frissítjük a $ g $, $ h $ és $ f $ változókat.\\
+
+Ha idő előtt kilép a ciklusokból, hibával tér vissza.
+
+\begin{python}
+	for neighbour in map.get_neighbours(current):
+            if neighbour in closed_nodes:
+                continue
+            candidate_g = g[current] + map.calc_cost(current, neighbour)
+
+            if neighbour not in opened_nodes:
+                opened_nodes.add(neighbour)
+            elif candidate_g >= g[neighbour]:
+                continue
+
+            came_from[neighbour] = current
+            g[neighbour] = candidate_g
+            h = map.heuristic(neighbour, end)
+            f[neighbour] = g[neighbour] + h
+
+    raise RuntimeError("A* failed to find a solution")
+\end{python}
+
+\bigskip
+\bigskip
+
+A main függvényben meghívjuk a szükséges függvényeket és kirajzoljuk az eredményt, valamint az akadályokat is kirajzoljuk szemléltetésképpen. A képen piros ponttal jelöljük a kezdőpontot, zöld ponttal pedig a végpontot. Az eredményt a \ref{fig:a_star} ábrán láthatjuk.
+
+\begin{python}
+if __name__ == "__main__":
+    map = AStarPathFinder()
+
+    start = (0, 0)
+    goal = (20, 3)
+
+    path, cost = a_star_search(start, goal, map)
+    x_coords = list(zip(*path))[0]
+    y_coords = list(zip(*path))[1]
+    
+    plt.figure()
+    rectangle1 = plt.Rectangle((2, 2), 6, 3, fc='blue', ec='red')
+    plt.gca().add_patch(rectangle1)
+    rectangle2 = plt.Rectangle((8, 8), 6, 4, fc='blue', ec='red')
+    plt.gca().add_patch(rectangle2)
+    rectangle3 = plt.Rectangle((15, 2), 4, 2, fc='blue', ec='red')
+    plt.gca().add_patch(rectangle3)
+    rectangle4 = plt.Rectangle((8, -3), 4, 2, fc='blue', ec='red')
+    plt.gca().add_patch(rectangle4)
+    rectangle5 = plt.Rectangle((23, -2), 4, 2, fc='blue', ec='red')
+    plt.gca().add_patch(rectangle5)
+    
+    plt.plot(x_coords, y_coords, 'black')
+
+    plt.plot(start[0], start[1], 'ro')
+    plt.plot(goal[0], goal[1], 'go')
+    plt.show()
+\end{python}
+
+\newpage
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.75]{images/a_star.png}
+\caption{A* keresés eredménye}
+\label{fig:a_star}
+\end{figure}
+
+\Section{A jármű mozgása és pozícionálása}
+
+Ebben a pontban szeretném bemutatni a jármű mozgása közben megoldandó pozícionálási problémát. Tehát egy autó-szerű objektumot fogunk vizsgálni, amint megpróbál eljutni egyik pontból a másikba, figyelembe véve azt is, hogy mi a kezdő és végpozíció irányvektora. Továbbra is egy kétdimenziós környezetben fogjuk nézni a jármű mozgását, valamint a bicikli modell alapján beállítani a paramétereit. A jármű középpontja a hátsó tengely közepe lesz, így a forgásközéppont a négykerekű járműre illesztett kétkerekű modell hátsó kerekének közepére fog esni. \\\\
+Ebben az esetben alapvetően három paraméterrel tudjuk a jármű pozícióját reprezentálni:
+\begin{itemize}
+	\item x pozíció
+	\item y pozíció
+	\item $ \delta $ irányszög
+\end{itemize}
+A számításokhoz a sebességet is figyelembe kell majd venni, ami a jármű pozícióját tekintve x irányban kap értéket, y-ban pedig mindig 0 lesz, ezzel elkerülve az oldal irányú csúszást a kerekek mozgásának megfelelően. A \ref{fig:position} ábrán ezt a részt a szaggatott vonalakkal jelölöm, amik mindig merőlegesek a jármű kerekeire és a forgásközéppontból indulnak. A jármű referenciapontja mindig egy kör alakú pályát követ, aminek a szögsebessége a következő képlettel leírható:\\
+
+$\dot{\delta} = \dfrac{v}{R},$ \\\\
+ahol $ v $ a sebesség, $ R $ pedig a hátsó kerék körpályájának a sugara. A későbbiekben $ \gamma $-val jelöljük majd a kanyarodási szöget, ami egy bizonyos értéknél nem lehet nagyobb, tekintve a jármű mechanikáját. Ennek a szögnek a maximum értéke határozza meg a kanyarodási ív sugarának minimális értékét. Egy állandó kanyarodási szög mellett az autó egy körpályán halad, ami miatt a a bejárni kívánt út ilyen körívekből épül fel. Tehát minden időpillanatban a kanyarodási szög kis mértékben változik, így az út követése egyszerűbbé válik. Ha egy négykerekű járművet veszünk figyelembe, akkor a kormányzott kerekek különböző sugarú íveket járnak be, és ezzel együtt a két kanyarodó kerék különböző szögekben is fordulnak el. Tehát itt $ \gamma_{inner} $  és $ \gamma_{outer} $ szögeket is meg kell különböztetni, mint a kanyarodás irányát tekintve külső és belső elfordulási szögeket az Ackerman mechanizmus alapján. 
+A jármű paraméterei a következő mozgási egyenlet szerint fog változni:
+\begin{itemize}
+	\item[] $ \dot{x} = v \cdot \cos\delta $
+	\item[] $ \dot{y} = v \cdot \sin\delta $
+	\item[] $ \dot{\delta} = \dfrac{v}{L} \cdot \tan\gamma $
+\end{itemize}
+
+Melynek $ \dot{\delta} $ értéke a $ \dot{\delta} = \dfrac{v}{R} $ képletből adódik. Ennek geometriai részletezése a metametikai modell résznél található a koncepció fejezetben. 
+
+Ezen modell a kinematikai modellnek felel meg, miszerint a jármű mozgását definiáljuk és nem a járműre ható erőket és egyéb környezeti hatásokat. Maga a pozíció változását a $ \delta $ fogja jelölni ( vagy $ \dot{\delta} $ ), melynek értékét az imént felvezetett irányszög képlete adja. A leírtakat a \ref{fig:position} ábrán keresztül szemléltetem.\\
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/position.png}
+\caption{A jármű mozgása}
+\label{fig:position}
+\end{figure}
+
+Az imént felvezetett egyenlet egyéb fontosabb karakterisztikákat is realizál, miszerint $ v  = 0-ban$ $ \delta = 0 $, ami azt jelenti, hogy nem tudjuk a jármű orientációját változtatni, ha az nincs mozgásban. Másként: a járműnek muszáj haladnia annak érdekében, hogy fordulni tudjunk vele. 
+
+Ahhoz, hogy el tudjunk mozdulni egy adott pontba, a sebességet arányosan kell változtatni a célhoz való távolság függvényében. Ekkor a következő képletet alkalmazhatjuk:\\
+
+$ v = K \cdot \sqrt{(x\_goal - x)^2 + (y\_goal - y) ^2}$ \\
+
+Valamint a kormányzást a célpozíció felé (ami esetünkben a jármű relatív kanyarodási szögét jelenti) a következő képpen tudjuk definiálni:\\
+
+$ \delta\_goal = \tan^{-1} \cdot \dfrac{y\_goal - y}{x\_goal - x} $\\
+
+valamint a kanyarodási szöget be kell állítani úgy, hogy az a végpontbeli állapot felé irányuljon:\\
+
+$ \gamma = K \cdot ( \delta\_goal \cdot \delta ) $, \qquad ahol $ K > 0 $\\
+
+Így eljutottunk a problémához, hogy a járművet egy bizonyos pozícióba kell irányítani $ (x\_goal, y\_goal, \delta\_goal) $. Az előbbiekben meghatározott képletek segítségével eljuthatunk ebbe a pozícióba a kezdőpozíció ismeretének függvényében. Először is a mozgási egyenletet át kell írnunk mátrix formába, ami a következő képpen fog alakulni:\\
+
+\( \begin{pmatrix}
+	\dot{x}\\
+	\dot{y}\\
+	\dot{\delta}
+\end{pmatrix} \)
+=
+\( \begin{pmatrix}
+	\cos\delta & 0\\
+	\sin\delta & 0\\
+	0 & 1
+\end{pmatrix} \)
+$ \cdot $ 
+\( \begin{pmatrix}
+	v\\
+	\gamma
+\end{pmatrix} \)
+\\\\\\
+Ezek alapján a következő változókat vezethetjük be, hogy irányítani tudjuk a járművet a célban megadott pozíció felé:
+\begin{itemize}
+	\item[] $ dist = \sqrt{\Delta x^2 + \Delta y^2} $
+	\item[] $ \alpha = \tan^{-1} \cdot \dfrac{\Delta y}{\Delta x} - \delta $
+	\item[] $ \beta = -\delta - \alpha $
+\end{itemize}
+ 
+Ezeket szintén mátrix formába rendezve a következőket kapjuk:\\
+
+\( \begin{pmatrix}
+	\dot{dist}\\
+	\dot{\alpha}\\
+	\dot{\beta}
+\end{pmatrix} \)
+=
+\( \begin{pmatrix}
+	\cos\alpha & 0\\\\
+	\dfrac{\sin\alpha}{dist} & -1\\\\
+	-\dfrac{\sin\alpha}{dist} & 0
+\end{pmatrix} \)
+$ \cdot $ 
+\( \begin{pmatrix}
+	v\\
+	\gamma
+\end{pmatrix} \)
+\\\\\\
+és feltételezve, hogy a célpozíció a jármű előtt van, a következő képpen irányítjuk az autót:\\
+
+$ v = K_{dist} \cdot dist $\\
+
+$ \gamma = K_\alpha \cdot \alpha + K_\beta \cdot \beta $\\\\
+ahol a konstans értékekre a következő feltételek vonatkoznak: $ K_{dist} > 0, \quad K_\beta < 0, \quad K_\alpha - K_\beta > 0  $\\
+Ellenkező esetben ennek az alkalmazott sebességnek a negáltját kell vennünk, tehát tolatni kell a járművel:\\
+
+$ v = -v $, \qquad ha $\alpha \not\in \left(-\dfrac{\pi}{2}, \dfrac{\pi}{2} \right) \quad $ (ez cél szerint változtatható lesz)\\\\
+Az lenne a lényege ennek a megoldásnak, hogy a a definiált képletek $ K_{dist} \cdot dist $ és $ K_\alpha \cdot \alpha $ egy vonal mentén vezetik a járművet a cél felé, amíg $ K_\beta \cdot \beta $ ezt a vonalat folyamatosan a cél irányba fordítja.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/moving_vehicle.png}
+\caption{A jármű mozgása}
+\label{fig:moving_vehicle}
+\end{figure}
+
+\subsection{Rotációs mátrix definiálása}
+
+A pozícionáláshoz szükséges pontokat, vektorokat és az azokkal végzett műveleteket szeretném egy kicsit részletezni. Mint már említettem, itt is egy Descartes-féle koordinátarendszerben dolgozunk, melyben egy-egy ponthoz az $ x $ és $ y $ tengely irányába mutató egységvektorok is tartoznak, tehát egy pont így írható le:\\
+
+$ P = x\vec{x} + y\vec{y} $\\\\
+Az A-ból B-be való eljutás egyfajta eltolás lesz az A koordinátán. Vagy inkább koordinátarendszeren, mivel a forgatást tekintve a tengelyek, mint vektorok is más-más irányba mutatnak majd. Tehát mondjuk, hogy a B koordináta el lett tolva egy $ t = (x, y) $ vektor által és el lett forgatva egy $ \delta $ szöggel. Ezt a \ref{fig:a_to_b_point} ábra szemlélteti:
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/A_to_B_point.png}
+\caption{A jármű mozgása}
+\label{fig:a_to_b_point}
+\end{figure}
+
+Ha csak a helyzet változást vesszük figyelembe, akkor egy olyan elmozdulást tapasztalunk, amikor a kapott pont tengelyei párhuzamosak a kezdőpontéra. Legyen ez az új pont $ T $, és az imént felírt képlet alapján:\\
+
+$ {}^{T}p = {}^{T}x\vec{x}{}_{T} + {}^{T}y\vec{y}{}_{T} $  =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{T} & \vec{y}{}_{T}
+\end{pmatrix}	 
+\)
+\(
+\begin{pmatrix}
+	{}^{T}x\\
+	{}^{T}y
+\end{pmatrix}	 
+\)\\\\
+A $ B $ pont, már az elforgatást is tartalmazza, mely 2 egység vektorral írható le:\\
+
+$ \vec{x}{}_{B} = \cos\delta\vec{x}{}_{T} + \sin\delta\vec{y}{}_{T} $\\
+
+$ \vec{y}{}_{B} = -\sin\delta\vec{x}{}_{T} + \cos\delta\vec{y}{}_{T} $\\\\
+ami mátrix formában felírva a következő:\\
+
+\(
+\begin{pmatrix}
+	\vec{x}{}_{B} & \vec{y}{}_{B}
+\end{pmatrix}
+\) =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{T} & \vec{y}{}_{T}
+\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	\cos\delta & -\sin\delta\\
+	\sin\delta & \cos\delta
+\end{pmatrix}
+\)\\\\
+A keresett $ P $ pont pedig az előzőekhez hasonlóan felírva:\\
+
+$ {}^{B}p = {}^{B}x\vec{x}{}_{B} + {}^{B}y\vec{y}{}_{B} $  =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{B} & \vec{y}{}_{B}
+\end{pmatrix}	 
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+Majd $ B $-vel megszorozva:\\
+
+$ {}^{B}p $ =
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\)
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta\\
+		\sin\delta & \cos\delta
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+Majd a jobb oldali együtthatókat egyenletként felírva a következőt kapjuk:\\
+
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\) = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta\\
+		\sin\delta & \cos\delta
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\qquad \Rightarrow \qquad\)  
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\) = 
+$ {}^{T}R{}_{B} $
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/T_to_B_point.png}
+\caption{A jármű négy pontja a programban}
+\label{fig:t_to_b_point}
+\end{figure}
+
+És ezzel leírtuk, hogyan forgattuk el a $ T $ pontot a $ B $ pontba. Ez lenne maga a rotációs mátrix. A fent leírt műveleteket a \ref{fig:t_to_b_point} ábra szemlélteti.
+\\\\
+Ehhez még hozzá kell adnunk az eltolást, ami az $ A $ pontból a $ B $ pontba történik. Ezt egy egyszerű vektoros hozzáadással tehetjük meg:\\
+
+\newpage
+
+
+\(
+\begin{pmatrix}
+	{}^{A}x\\
+	{}^{A}y
+\end{pmatrix}	 
+\) = 
+\(
+\begin{pmatrix}
+	{}^{T}x\\
+	{}^{T}y
+\end{pmatrix}	 
+\) + 
+\(
+\begin{pmatrix}
+	x\\
+	y
+\end{pmatrix}
+\) =
+\(
+\begin{pmatrix}
+	\cos\delta & -\sin\delta\\
+	\sin\delta & \cos\delta
+\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\) + 
+\(
+\begin{pmatrix}
+	x\\
+	y
+\end{pmatrix}	 
+\)\\\\ = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta & x\\
+		\sin\delta & \cos\delta & y
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y\\
+	1
+\end{pmatrix}	 
+\)\\\\
+Míg a $2 x 2$ -es mátrix segítségével a forgatást oldottuk meg, magát az elmozdulást egy $ 3 x 3 $ -as adja majd. Egy $t = (x, y) $ vektort fel tudunk írni homogén formában a dimenziószámot egyel növelve, ilyenkor általában egyet adunk meg a harmadik koordinátának. Így a $ P $ pontra vonatkozó transzformációt fel tudjuk írni a következőképpen:\\
+
+$ {}^{A}\vec{p} $ = 
+\(
+\begin{pmatrix}
+	{}^{T}R{}_{B} & t\\
+	0_{1x2} & 1
+\end{pmatrix}	 
+\)
+$ {}^{B}\vec{p} $\\\\
+Ezek alapján a végső transzformáció:\\
+
+$P(x, y, \delta)$ = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta & x\\
+		\sin\delta & \cos\delta & y\\
+		0 & 0 & 1
+	\end{pmatrix}
+\)
+
+
+\subsection{Jármű mozgásának szimulálása}
+
+Az előző két pontban a matematikai számítások alapján készítettem egy szimulációt, ami egy parkolóban ábrázolja a téglatest alakú járművet és be lehet állítani, hogy milyen pozícióból hová jusson el. Szemléltetés képpen készítettem néhány .gif fájlt, amelyek különböző bemenetekre adnak eredményt és szemléltetik a jármű mozgását a fent leírt definíciók alkalmazásával.
+\\\\
+Lássuk a kódot, kezdve a szükséges importokkal és értéket adunk a konstans változóknak, amik az irányításban és a sebesség megválasztásában játszanak szerepet. Emellett a parkoló kirajzolását végző osztályt példányosítjuk.
+\\\\
+
+\begin{python}
+import matplotlib.pyplot as plt
+import numpy as np
+from math import cos, sin, sqrt, atan2, pi
+from python.program.navigator import parking_lot
+
+k_distance = 2
+k_alpha = 6
+k_beta = -2
+dt = 0.01
+
+draw = parking_lot.ParkingLot()
+\end{python}
+
+\bigskip
+\bigskip
+
+Definiáljunk négy tömböt, melynek első két paraméterével lehet a jármű méretét állítani, a harmadik pedig mindig 1, hogy az aktuális pozíciót adja vissza (mátrix szorzásnál vehető majd észre). Ez a négy sarkát jelenti a járműnek és az eltolások amiket megadunk, az adott tengely középpontjához mérve értendőek. Az alapértelmezett beállítás 0 radián, ekkor az autó jobbra néz. A \ref{fig:vehicle_points} ábra szemléltetné ezt a méretezést.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/vehicle_points.png}
+\caption{A jármű négy pontja a programban}
+\label{fig:vehicle_points}
+\end{figure}
+
+A programban:
+\begin{python}
+p1_init = np.array([1, -0.5, 1])
+p2_init = np.array([1, 0.5, 1])
+p3_init = np.array([-1, 0.5, 1])
+p4_init = np.array([-1, -0.5, 1])
+\end{python}
+
+\bigskip
+
+A rotációs mátrix egy külön függvény lesz, mely mindig az aktuális pozícióra állítja be a járművet.
+\begin{python}
+def rotation_matrix(x, y, heading_angle):
+    return np.array([
+        [cos(heading_angle), -sin(heading_angle), x],
+        [sin(heading_angle), cos(heading_angle), y],
+        [0, 0, 1]
+    ])
+\end{python}
+
+\bigskip
+
+A következő függvény fogja kirajzolni a járművet és az útvonalat. A pontokat megkapjuk, ha a mátrixokat a numpy.matmul() függvényével összeszorozzuk, valamint a pozíció is mindig az aktuális $ x $ és $ y $ lesz. Következő lépésben a plot() függvény segítségével összekötjük a pontokat egy vonallal, így lesz látható végig a jármű. Valamint még egy csillagot helyeztem az első részére, hogy tudjuk merre van a jármű eleje. Itt rajzoljuk ki a parkolót is, valamint kék szaggatott vonallal az útvonalat, amit egy másik függvény számol. A .gif animációhoz a képeket pedig a savefig() függvénnyel mentem le, mindig az adott lépésszámot kapja a kép neve, hogy ne íródjanak felül és legyen egy sorrend a mozgókép készítéshez.
+
+\begin{python}
+def plot_vehicle(x, y, heading_angle, x_path, y_path, steps):
+    """
+    Plotting the vehicle and it's path using the rotation matrix
+    for visualizing.
+    Plotting the parking lot as well.
+    :param x: actual x position of the vehicle
+    :param y: actual y position of the vehicle
+    :param heading_angle: heading angle
+    :param x_path: x trajectory
+    :param y_path: y trajectory
+    :param steps: number of steps in the motion, using for generating
+    images with numbered names
+    :return: none
+    """
+    r = rotation_matrix(x, y, heading_angle)
+
+    p1 = np.matmul(r, p1_init)
+    p2 = np.matmul(r, p2_init)
+    p3 = np.matmul(r, p3_init)
+    p4 = np.matmul(r, p4_init)
+
+    plt.plot([(p1[0] + p2[0]) / 2], p1[1], 'k*')
+
+    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'k-')
+    plt.plot([p2[0], p3[0]], [p2[1], p3[1]], 'k-')
+    plt.plot([p3[0], p4[0]], [p3[1], p4[1]], 'k-')
+    plt.plot([p4[0], p1[0]], [p4[1], p1[1]], 'k-')
+
+    draw.plot_parking_lot()
+
+    plt.plot(x_path, y_path, 'b--')
+    plt.savefig('pictures/'f'fig-0{steps}.png')
+
+\end{python}
+
+\bigskip
+
+A következő metódus fogja a jármű mozgatását, irányba állítását végezni a háttérben. Megadja magát az útvonalat, amit be kell járni. A szükséges változók értéket kapnak. A $ distance $ azért szerepel kétszer, mert az folyamatosan csökkenni fog, ahogy haladunk a cél felé, viszont szükség lesz az eredeti értékre is, hogy hatékonyabban tudjuk kontrollálni a sebességet ezáltal. Természetesen, ahogy az A* algoritmusnál, úgy itt is az Euklideszi távolsággal való számítás fog optimális eredményt adni.
+
+\begin{python}
+def moving_vehicle(x_start, y_start, start_heading_angle, x_goal,
+ y_goal, goal_heading_angle):
+    """
+    Calculates the trajectory and calls vehicle plotting
+    function to visualize it
+    :param x_start: x start coordinate of vehicle
+    :param y_start: y start coordinate of vehicle
+    :param start_heading_angle: vehicle's heading angle at the start
+    :param x_goal: x goal coordinate of vehicle
+    :param y_goal: y goal coordinate of vehicle
+    :param goal_heading_angle: vehicle's target heading angle
+    at the goal position
+    :return: none
+    """
+    x = x_start
+    y = y_start
+    heading_angle = start_heading_angle
+
+    x_diff = x_goal - x
+    y_diff = y_goal - y
+    distance_init = sqrt(x_diff**2 + y_diff**2)
+    distance = sqrt(x_diff**2 + y_diff**2)
+
+    x_path = []
+    y_path = []
+\end{python}
+
+\bigskip
+
+A következőkben a távolság újraszámolódik, ugyanis ez minden lépésnél változni fog. A ciklus addig tart, amíg a céltól való távolság el nem ér egy nagyon kicsi értéket, jelen esetben a 0.01-et. Ezen kívül itt hozom létre azokat a szögeket, amik a \ref{fig:moving_vehicle} ábrán láthatóak. Tehát $ alpha $ az a szög, ami a jármű jelenlegi pozícióját mutató vektor és a cél felé mutató vektor által bezárt szög. Ugyanakkor a $ beta $ szög a célba érkezéshez megadott szög és a jelenlegi irány közötti szög lenne. Ezen felül a sebességet $ v $ változóként definiálom a távolsággal arányosan, valamint egy $ steering $ változót, ami végzi majd a jármű forgatását, tehát a kanyarodási szög, ami a \ref{fig:moving_vehicle} ábrán $ \gamma $ jelzéssel szerepel.
+
+\begin{python}
+while distance > 0.01:
+        x_diff = x_goal - x
+        y_diff = y_goal - y
+
+        distance = sqrt(x_diff**2 + y_diff**2)
+        alpha = atan2(y_diff, x_diff) - heading_angle
+        beta = goal_heading_angle - heading_angle - alpha
+
+        v = k_distance*distance
+        steering = k_alpha*alpha + k_beta*beta
+\end{python}
+
+\bigskip
+
+A sebesség kontrollálása következik. Színvonalasabb az animáció, ha a sebességet az első néhány méteren csökkentjük, vagyis utána fog növekedni a távolság függvényében. Ezzel a lassabb elindulást tehetjük láthatóvá, majd a gyorsítást. A célhoz közel pedig szintén lelassul, ez is a távolságtól függ. Másrészt beállítjuk, hogy tolasson a jármű, ha az $ alpha $ szög nagyobb mint $ \dfrac{\pi}{2} $ vagy kisebb, mint $ -\dfrac{\pi}{2} $ ( $ \alpha $ > 90$^{\circ}$ vagy $ \alpha $ < - 90$^{\circ}$ ). Ezzel a parkolóból hátrafelé kiállást valósíthatjuk meg. A tolatás sebessége egy állandó érték, ezzel megakadályozva, hogy túl gyorsan tolasson ki, a távolságbecslés miatt.
+
+\begin{python}
+        if distance > distance_init - 1:
+            v = v/3
+        elif distance > distance_init - 2:
+            v = v/2
+
+        if alpha > pi/3 or alpha < -pi/3:
+            v = -9
+\end{python}
+
+\bigskip
+
+A $ \delta $ szöget itt a $ heading\_angle $ jelöli, ami a kanyarodás függvényében változik. Az $ x $ és $ y $ pozíciókat  hozzáadom az útvonl tárolásához létrehozott tömbökhöz, majd a kirajzoláshoz megjelenítek két nyilat, melyek a kezdő és végpozíciót reprezentálják. Ez után a már bemutatott $ plot\_vehicle $ metódus segítségével kirajzolom az útvonalat és a járművet. Ha ez a $ while $ cikluson belül történik, akkor minden lépésről képet generál, és ezekből készítettem különböző esetekre .gif animációkat. Mivel linux környezetben dolgozom, ezeket a képeket egy terminálból lefuttatott paranccsal át tudtam konvertálni: convert -delay 2 -loop 0 \$(ls -1 *.png | sort -V) animation.gif
+
+\begin{python}
+ 	heading_angle = heading_angle + steering*dt
+
+        x = x + v*cos(heading_angle)*dt
+        y = y + v*sin(heading_angle)*dt
+        x_path.append(x)
+        y_path.append(y)
+
+        plt.cla()
+        plt.arrow(x_start, y_start, cos(start_heading_angle),
+                  sin(start_heading_angle), color='r', width=0.1)
+        plt.arrow(x_goal, y_goal, cos(goal_heading_angle),
+                  sin(goal_heading_angle), color='g', width=0.1)
+        plot_vehicle(x, y, heading_angle, x_path, y_path, len(x_path))
+\end{python}
+
+A $ main $ függvényben megadjuk a szükséges paramétereket és meghívjuk a \\ $ moving\_vehicle $ metódust. Az így kapott eredményeket a dolgozatom "animations" nevű mappájában megtalálható.
+
+\begin{python}
+if __name__ == '__main__':
+    x_start = 6.5
+    y_start = 8
+    start_heading_angle = pi/2
+    x_goal = 18.5
+    y_goal = 9
+    goal_heading_angle = -pi/2
+
+    print("Start x: %.2f m\nStart y: %.2f m\nStart heading angle:
+     %.2f rad\n" % (x_start, y_start, start_heading_angle))
+    print("Start x: %.2f m\nGoal y: %.2f m\nGoal heading angle:
+     %.2f rad\n" % (x_goal, y_goal, goal_heading_angle))
+    moving_vehicle(x_start, y_start, start_heading_angle, x_goal,
+     y_goal, goal_heading_angle)
+\end{python}
+
+% \Section{Gépi tanítás a probléma inverzével}
 
 % TODO: Véletlenszerű útvonalakhoz (mint jó megoldásokhoz) generálni akadályokat, és úgy tekinteni, hogy ez az algoritmus be- és kimenetére egy-egy példát jelent.
