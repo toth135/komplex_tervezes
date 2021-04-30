@@ -1,9 +1,15 @@
 \Chapter{Bevezetés}
 
-A fejezet célja, hogy a feladatkiírásnál kicsit részletesebben bemutassa, hogy miről fog szólni a dolgozat.
-Érdemes azt részletezni benne, hogy milyen aktuális, érdekes és nehéz probléma megoldására vállalkozik a dolgozat.
+A négykerekű járművek mozgása sokféle tudományág definícióiból határozható meg a való életben. A dolgozatomban alapvetően a járművet geometriai és kinematikai szemszögből vizsgálom meg, az ezen tudományágak definíciói segítségével szeretnék néhány problémára kitérni, amik szóba jöhetnek navigációs szempontból.
 
-Ez egy egy-két oldalas leírás.
-Nem kellenek bele külön szakaszok (section-ök).
-Az irodalmi háttérbe, a probléma részleteibe csak a következő fejezetben kell belemenni.
-Itt az olvasó kedvét kell meghozni a dolgozat többi részéhez.
+Az egyik alapvető probléma például, hogy egy jármű egyik pontból a másikba kellene, hogy eljusson. Ezt különböző algoritmusok segítségével tudjuk kivitelezni, amely valamilyen logika alapján meghatároz egy útvonalat végeredményként. Kezdésként a véletlen számok használatával juttatnám el a járművet bizonyos pontokba, és megláthatjuk, milyen paraméterek alapján mely pozíciókba juthatunk el a legnagyobb valószínűséggel. Mivel ez az eredmény még nem tekinthető optimálisnak, szükség lesz egy keresőalgoritmusra, ami eleget tesz bizonyos alapkövetelményeknek. Ez esetben a célfüggvény a legrövidebb útvonalat jelentené a két pont között.
+
+A következő esetben egy jármű mozgását szeretném szimulálni egy parkolóban. Itt meg kell határoznunk, hogy melyik parkolóhelyről, melyik másikba álljon át az autó, valamint orral vagy háttal. Ehhez meg kell oldani, hogy a kiszámított útvonalat tudja követni a jármű. Mivel megadjuk, hogy a kezdő- és végpozíciókban az egyeneshez képest merre felé néz, így nyomon kell követni minden lépésben ezt az aktuális szöget.
+
+Mindenféle mozgás vagy útvonal tervezés a dolgozatomban kétdimenziós környezetben történik. A Descartes-féle koordinátarendszert veszem alapul a pozícionálásokhoz és az egyéb pontok meghatározásához. Így is fogom az eredményeket ábrázolni, melyek képként lesznek megjelenítve valamint ezeken az $ x $ és $ y $ koordináták be lesznek skálázva.
+
+Végeredményként szeretnék majd a parkolós mozgásról kezdetleges animációkat bemutatni, hogy hogyan képes az adott paraméterek alapján az autó navigálni és célba érkezni. Ezeket .gif kiterjesztésű mozgókép formában szemléltetném majd, amelyek a dolgozat mappájában elérhetőek lesznek.
+
+Minden ilyen teszt esetet implementáltam python nyelven, ezen kódrészeket is be fogom mutatni és rögtön utána egy-egy példát is, mint futtatási eredményt kép formájában. Kitérek azokra a matematikai definíciókra is, amik alapján a kód készült. Ezeket részletesen le fogom vezetni és ábrákkal is szemléltetem a későbbiekben a definiált változókat.
+
+

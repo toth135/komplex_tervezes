@@ -14,22 +14,22 @@ Az első és hátsó kerekek is egy-egy körpályát fognak követni azonos köz
 \caption{Kétkerekű jármű kanyarodási íve}
 \label{fig:two_wheels_rad}
 \end{figure}
-Az ábrán R az első kerékhez tartozó sugár, r pedig a hátsó kerékhez.\newline
-Az első kerék pályája: $\sin\alpha$ = $\cfrac{w}{R}$ \hspace{5mm}---> \hspace{5mm} $R$ = $\cfrac{w}{\sin\alpha}$ \newline
+A \ref{fig:two_wheels_rad} ábrán R az első kerékhez tartozó sugár, r pedig a hátsó kerékhez.\\
+Az első kerék pályája: $\sin\alpha$ = $\cfrac{w}{R}$ \hspace{5mm}---> \hspace{5mm} $R$ = $\cfrac{w}{\sin\alpha}$ \\
 A hátsó kerék pályája: $\tan\alpha$ = $\cfrac{w}{r}$ \hspace{5mm}---> \hspace{5mm} $r$ = $\cfrac{w}{\tan\alpha}$
-\newpage
+\\
 
-Itt a szögfüggvényekben való eltérést az ábrán látható háromszögől leolvashatjuk, miszerint első kerék esetén a derékszögű háromszög átfogója lesz a sugár, így a kanyarodási szög sinus-át vesszük, a hátsó kerék esetén pedig a szög melletti befogó lesz a sugár, tehát a tangensét kell néznünk. Így átalakítva a képletet megkapjuk a két sugarat.   
+Itt a szögfüggvényekben való eltérést a \ref{fig:two_wheels_rad} ábrán látható háromszögől leolvashatjuk, miszerint első kerék esetén a derékszögű háromszög átfogója lesz a sugár, így a kanyarodási szög szinuszát vesszük, a hátsó kerék esetén pedig a szög melletti befogó lesz a sugár, tehát a tangensét kell néznünk. Így átalakítva a képletet megkapjuk a két sugarat.   
 
 
 \Section{A jármű matematikai modellje}
 
-Áttérve a négykerekű járművekre szintén meg lehet határozni mind a négy kerékhez tartozó sugarat. A (\ref{fig:each_wheel_radius}. ábra) egy kicsivel részletesebb modellt szemléltet, amin megjelölöm mind a 4 sugarat. Az ábrán az úgynevezett ackerman geometria technológia lényege is látható egy nagyon egyszerű szemléltetéssel, ami megoldja az első két kerék különböző szögekbe való fordítását, ha a jármű fizikai felépítését vesszük. A sugarak kiszámításához képletek a következők:
-$\newline$
+Áttérve a négykerekű járművekre szintén meg lehet határozni mind a négy kerékhez tartozó sugarat. A \ref{fig:each_wheel_radius}. ábra egy kicsivel részletesebb modellt szemléltet, amin megjelölöm mind a négy sugarat. Az ábrán az úgynevezett Ackerman kanyarodási geometria lényege is látható egy nagyon egyszerű szemléltetéssel, ami megoldja az első két kerék különböző szögekbe való fordítását, ha a jármű fizikai felépítését vesszük. A sugarak kiszámításához képletek a következők:
+\\
 $R_{IF}$ =  $\cfrac{w}{\sin\alpha_1}$ - $\cfrac{a}{2}$\qquad
-$R_{IR}$ =  $\cfrac{w}{\tan\alpha_1}$ - $\cfrac{a}{2}$\newline
+$R_{IR}$ =  $\cfrac{w}{\tan\alpha_1}$ - $\cfrac{a}{2}$\\
 $R_{OF}$ =  $\cfrac{w}{\sin\alpha_2}$ + $\cfrac{a}{2}$\qquad
-$R_{OR}$ =  $\cfrac{w}{\sin\alpha_1}$ + $\cfrac{a}{2}$\newline
+$R_{OR}$ =  $\cfrac{w}{\sin\alpha_1}$ + $\cfrac{a}{2}$\\
 
 \begin{figure}[h!]
 \centering
@@ -38,18 +38,18 @@ $R_{OR}$ =  $\cfrac{w}{\sin\alpha_1}$ + $\cfrac{a}{2}$\newline
 \label{fig:each_wheel_radius}
 \end{figure}
 
-Itt az első kerekeknél a sugár az átfogót képezné, míg a hátsó kerekeknél a szög melletti befogót. Ezért is váltakozik a a $\sin$ és a $\tan$ a trigonometriai összefüggések hatására. Az $\cfrac{a}{2}$ pedig attól függően, hogy a kanyarodás irányához viszonyítva a külső vagy belső kerekekről van szó, a tengely hosszának a felét elvesszük vagy hozzáadjuk a képlethez. 
+Itt az első kerekeknél a sugár az átfogót képezné, míg a hátsó kerekeknél a szög melletti befogót. Ezért is váltakozik a szinusz és a tangens a trigonometriai összefüggések hatására. Az $\cfrac{a}{2}$ pedig attól függően, hogy a kanyarodás irányához viszonyítva a külső vagy belső kerekekről van szó, a tengely hosszának a felét elvesszük vagy hozzáadjuk a képlethez.\\\\ 
+\textbf{Régebbi technológiák:}\\
 
-Szeretném egy kicsit részletesebben (kezdetitől a modernebb megoldásokig) bemutatni a jármű modelljét és magát a kanyarodási elvekett/technológiákatt. 
+Szeretném egy kicsit részletesebben (kezdetitől a modernebb megoldásokig) bemutatni a jármű modelljét és a kanyarodási elveket/technológiákat. 
 
-A kanyarodás az első kerekek elforgatásával történik. Az első ilyen koncepciónál magát a tengelyt lehetett kormányozni, nem pedig a kerekeket. Ez a megoldás a lassú haladáshoz és a könnyebb manőverezéshez előnyös lehet, de az első tengelynek nagy ívben el kell fordulnia a kanyarodástól függően valamelyik irányba. Ez a futómű kialakítását nagy mértékben korlátozza, maga a felfüggesztés megoldása is nagy kihívás lehet ezt a technológiát használva.
+A kanyarodás az első kerekek elforgatásával történik. Az első ilyen koncepciónál magát a tengelyt lehetett kormányozni, nem pedig a kerekeket. Ez a megoldás a lassú haladáshoz és a könnyebb manőverezéshez előnyös lehet, de az első tengelynek nagy ívben el kell fordulnia a kanyarodástól függően valamelyik irányba. Ez a futómű kialakítását nagy mértékben korlátozza, maga a felfüggesztés megoldása is nagy kihívás lehet ezt a technológiát alkalmazva.
 
 A kanyarodás következő megoldásánál már mindkét első kerék külön-külön forgatható, de azonos az elfordulási szög. Ebben az esetben a jármű dinamikáját nézve úgynevezett oldal irányú csúszás tapasztalható a kerekeken (a kanyarodás irányának függvényében). Ebben közrejátszik, hogy mivel mindkét kerék egy irányba néz ha el van fordítva a kormány, 2 különböző középpontja lesz a forgásnak, így legalább az egyik kerék csúszni fog a kanyarodáskor.
 
-Ideális megoldásnak vesszük azt az esetet, mikor mindkét első kereket egymástól függetlenül lehet kormányozni. Ebben az esetben mindkét kerék kanyarodási szögét meg lehetne úgy határozni, hogy a kerék középpontja egy érintő egyenes lenne a közös kanyarodási középpontból húzható körívre. Így megválasztva a megfelelő sugárt a körívnek, mindkét kereket tekintve elkerülhető az oldal irányú csúszás. A fejezet további ehhez kapcsolódó pontjai is ezt a megoldást fogják tovább részletezni.
+Ideális megoldásnak vesszük azt az esetet, mikor mindkét első kereket egymástól függetlenül lehet kormányozni. Ebben az esetben mindkét kerék kanyarodási szögét meg lehetne úgy határozni, hogy a kerék középpontja egy érintő egyenes lenne a közös kanyarodási középpontból húzható körívre. Így megválasztva a megfelelő sugarat a körívnek, mindkét kereket tekintve elkerülhető az oldal irányú csúszás. A fejezet további ehhez kapcsolódó pontjai is ezt a megoldást fogják tovább részletezni.\\
 
-
-Definiálnunk kell különböző jelöléseket, melyek segítségével a képletek leírhatók és értelmezhetők. A négykerekű jármű középpontjának a hátsó tengely középpontját tekintjük. Legalábbis a z elforduláshoz szükséges számításoknál ezt vesszük figyelembe. Mivel a kanyarodásnál az első kerekek különböző szögeket zárnak be az első tengellyel, ezért érdemes egy képzeletbeli, az első tengely közepére eső kormányozható kereket megadni. Ennek a jármű irányával bezárt előjeles szögét jelöljük $\alpha$-val. A jármű tengelytávolságát jelöljük $w$-vel, a hátsó tengely hosszát pedig $a$-val (\ref{fig:vehicle}. ábra).
+Definiálnunk kell különböző jelöléseket, melyek segítségével a képletek leírhatók és értelmezhetők. A négykerekű jármű középpontjának a hátsó tengely középpontját tekintjük. Vagyis esetünkben az elforduláshoz szükséges számításoknál ezt vesszük figyelembe. Mivel a kanyarodásnál az első kerekek különböző szögeket zárnak be az első tengellyel, ezért érdemes egy képzeletbeli, az első tengely közepére eső kormányozható kereket megadni. Ennek a jármű irányával bezárt előjeles szögét jelöljük $\alpha$-val. A jármű tengelytávolságát jelöljük $w$-vel, a hátsó tengely hosszát pedig $a$-val (\ref{fig:vehicle}. ábra).
 
 \begin{figure}[h!]
 \centering
@@ -81,7 +81,7 @@ $\alpha\textsubscript{1}$ = $\text{arctan}\Bigg(\cfrac{w}{R-\frac{a}{2}}\Bigg)$ 
 \vspace{5mm}
 
 
-A kanyarodási sugárból átalakítható a képlet a trigonometrikus összefüggéseket figyelembe véve. A szögeket megkaphatjuk, ha a képletet rendezzük úgy, hogy a tangens inverzével szorozva elosztjuk a tengelytávolságot az adott kerékhez tartozó sugárral. Ugyanis az arctan visszaadja azt a szöget, ami jelen esetben a sugárhoz és a tengelytávolsághoz tartozik. Mivel mindkét keréknek más lesz a sugara a kijelölt ponttól, ezeket is is külön meg kell határozni, így a képlet nevezőjében a kanyarodási középponthoz közelebb eső kerékhez tartozó sugárból kivonjuk a jármű szélességének felét, míg a messzebb eső kerékhez hozzáadjuk ezt az értéket.
+A kanyarodási sugárból átalakítható a képlet a trigonometrikus összefüggéseket figyelembe véve. A szögeket megkaphatjuk, ha a képletet rendezzük úgy, hogy a tangens inverzével szorozva elosztjuk a tengelytávolságot az adott kerékhez tartozó sugárral. Ugyanis az arkusz tangens visszaadja azt a szöget, ami jelen esetben a sugárhoz és a tengelytávolsághoz tartozik. Mivel mindkét keréknek más lesz a sugara a kijelölt ponttól, ezeket is külön meg kell határozni, így a képlet nevezőjében a kanyarodási középponthoz közelebb eső kerékhez tartozó sugárból kivonjuk a jármű szélességének felét, míg a messzebb eső kerékhez hozzáadjuk ezt az értéket.
 \vspace{15mm}
 
 % TODO: Részletesen leírni ezek számítását!
