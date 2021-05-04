@@ -1,4 +1,4 @@
-\Chapter{Koncepció}
+\Chapter{A járművek mozgásának modellezése}
 
 \Section{Kétkerekű modell kanyarodási íve}
 
@@ -82,7 +82,6 @@ $\alpha\textsubscript{1}$ = $\text{arctan}\Bigg(\cfrac{w}{R-\frac{a}{2}}\Bigg)$ 
 
 
 A kanyarodási sugárból átalakítható a képlet a trigonometrikus összefüggéseket figyelembe véve. A szögeket megkaphatjuk, ha a képletet rendezzük úgy, hogy a tangens inverzével szorozva elosztjuk a tengelytávolságot az adott kerékhez tartozó sugárral. Ugyanis az arkusz tangens visszaadja azt a szöget, ami jelen esetben a sugárhoz és a tengelytávolsághoz tartozik. Mivel mindkét keréknek más lesz a sugara a kijelölt ponttól, ezeket is külön meg kell határozni, így a képlet nevezőjében a kanyarodási középponthoz közelebb eső kerékhez tartozó sugárból kivonjuk a jármű szélességének felét, míg a messzebb eső kerékhez hozzáadjuk ezt az értéket.
-\vspace{15mm}
 
 % TODO: Részletesen leírni ezek számítását!
 
@@ -140,4 +139,313 @@ x_1 = x_0 + \left[\dfrac{1}{\varphi} \cdot \sin(\varphi(t))\right]_{t_0}^{t_1} =
 y_1 = y_0 + \left[- \dfrac{1}{\varphi} \cdot \cos(\varphi(t))\right]_{t_0}^{t_1} = y_0 + \left(\left(- \dfrac{1}{\varphi} \cdot \cos(\varphi({t_1)})\right) - \left(- \dfrac{1}{\varphi} \cdot \sin(\varphi({t_0}))\right)\right) \\
 \end{align*}
 
-Ezzel a számítással megkaphatjuk a jármű által bejárt utat. Jelen esetben a képlet mindig csak a következő pozítiót adja meg, tehát $x_1$ jelentené a következő pozíciót, $x_0$ az előzőt. Az idő szintén a nulladik és az első időpillanatra vonatkozik ($t_0$, $t_1$), valamint a kanyarodási szög mindig az aktuális. Ennek a szögnek az értékénél figyelembe kell venni, hogy negatív vagy pozitív szám. Ez megadja, hogy melyik irányba kanyarodik a jármű a 0 fokhoz képest (ami azt jelenti, hogy előre felé néz). Ha a $\varphi$ < 0 akkor jobbra, ha $\varphi$ > 0  akkor balra fog kanyarodni. 
+Ezzel a számítással megkaphatjuk a jármű által bejárt utat. Jelen esetben a képlet mindig csak a következő pozítiót adja meg, tehát $x_1$ jelentené a következő pozíciót, $x_0$ az előzőt. Az idő szintén a nulladik és az első időpillanatra vonatkozik ($t_0$, $t_1$), valamint a kanyarodási szög mindig az aktuális. Ennek a szögnek az értékénél figyelembe kell venni, hogy negatív vagy pozitív szám. Ez megadja, hogy melyik irányba kanyarodik a jármű a 0 fokhoz képest (ami azt jelenti, hogy előre felé néz). Ha a $\varphi$ < 0 akkor jobbra, ha $\varphi$ > 0  akkor balra fog kanyarodni.
+
+\Section{A jármű mozgása és pozícionálása}
+
+Ebben a pontban szeretném bemutatni a jármű mozgása közben megoldandó pozícionálási problémát. Tehát egy autó-szerű objektumot fogunk vizsgálni, amint megpróbál eljutni egyik pontból a másikba, figyelembe véve azt is, hogy mi a kezdő és végpozíció irányvektora. Továbbra is egy kétdimenziós környezetben fogjuk nézni a jármű mozgását, valamint a kétkerekű modell alapján beállítani a paramétereit. A jármű középpontja a hátsó tengely közepe lesz, így a forgásközéppont a négykerekű járműre illesztett kétkerekű modell hátsó kerekének közepére fog esni. \\\\
+Ebben az esetben alapvetően három paraméterrel tudjuk a jármű pozícióját reprezentálni:
+\begin{itemize}
+	\item x pozíció
+	\item y pozíció
+	\item $ \delta $ irányszög
+\end{itemize}
+A számításokhoz a sebességet is figyelembe kell majd venni, ami a jármű pozícióját tekintve x irányban kap értéket, y-ban pedig mindig 0 lesz, ezzel elkerülve az oldal irányú csúszást a kerekek mozgásának megfelelően. A \ref{fig:position} ábrán ezt a részt a szaggatott vonalakkal jelölöm, amik mindig merőlegesek a jármű kerekeire és a forgásközéppontból indulnak. A jármű referenciapontja mindig egy kör alakú pályát követ, aminek a szögsebessége a következő képlettel leírható:\\
+
+$\dot{\delta} = \dfrac{v}{R},$ \\\\
+ahol $ v $ a sebesség, $ R $ pedig a hátsó kerék körpályájának a sugara. A későbbiekben $ \gamma $-val jelöljük majd a kanyarodási szöget, ami egy bizonyos értéknél nem lehet nagyobb, tekintve a jármű mechanikáját. Ennek a szögnek a maximum értéke határozza meg a kanyarodási ív sugarának minimális értékét. Egy állandó kanyarodási szög mellett az autó egy körpályán halad, ami miatt a bejárni kívánt út ilyen körívekből épül fel. Tehát minden időpillanatban a kanyarodási szög kis mértékben változik, így az út követése egyszerűbbé válik. Ha egy négykerekű járművet veszünk figyelembe, akkor a kormányzott kerekek különböző sugarú íveket járnak be, és ezzel együtt a két kanyarodó kerék különböző szögekben is fordulnak el. Tehát itt $ \gamma_{inner} $  és $ \gamma_{outer} $ szögeket is meg kell különböztetni, mint a kanyarodás irányát tekintve külső és belső elfordulási szögeket az Ackerman mechanizmus alapján. 
+A jármű paraméterei a következő mozgási egyenlet szerint fognak változni:
+\begin{itemize}
+	\item[] $ \dot{x} = v \cdot \cos\delta $
+	\item[] $ \dot{y} = v \cdot \sin\delta $
+	\item[] $ \dot{\delta} = \dfrac{v}{L} \cdot \tan\gamma $
+\end{itemize}
+
+Melynek $ \dot{\delta} $ értéke a $ \dot{\delta} = \dfrac{v}{R} $ képletből adódik. Ennek geometriai részletezése a metametikai modell résznél található a koncepció fejezetben. 
+
+Ezen modell a kinematikai modellnek felel meg, miszerint a jármű mozgását definiáljuk és nem a járműre ható erőket és egyéb környezeti hatásokat. Maga a pozíció változását a $ \delta $ fogja jelölni ( vagy $ \dot{\delta} $ ), melynek értékét az imént felvezetett irányszög képlete adja. A leírtakat a \ref{fig:position} ábrán keresztül szemléltetem.\\
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/position.png}
+\caption{A jármű mozgása}
+\label{fig:position}
+\end{figure}
+
+Az imént felvezetett egyenlet egyéb fontosabb karakterisztikákat is realizál, miszerint $ v = 0-ban$ $ \delta = 0 $, ami azt jelenti, hogy nem tudjuk a jármű orientációját változtatni, ha az nincs mozgásban. Másként: a járműnek muszáj haladnia annak érdekében, hogy fordulni tudjunk vele. 
+
+Ahhoz, hogy el tudjunk mozdulni egy adott pontba, a sebességet arányosan kell változtatni a célhoz való távolság függvényében. Ekkor a következő képletet alkalmazhatjuk:\\
+
+$ v = K \cdot \sqrt{(x\_goal - x)^2 + (y\_goal - y) ^2}$ \\
+
+Valamint a kormányzást a célpozíció felé (ami esetünkben a jármű relatív kanyarodási szögét jelenti) a következő képpen tudjuk definiálni:\\
+
+$ \delta\_goal = \tan^{-1} \cdot \dfrac{y\_goal - y}{x\_goal - x} $\\
+
+valamint a kanyarodási szöget be kell állítani úgy, hogy az a végpontbeli állapot felé irányuljon:\\
+
+$ \gamma = K \cdot ( \delta\_goal \cdot \delta ) $, \qquad ahol $ K > 0 $\\
+
+Így eljutottunk a problémához, hogy a járművet egy bizonyos pozícióba kell irányítani $ (x\_goal, y\_goal, \delta\_goal) $. Az előbbiekben meghatározott képletek segítségével eljuthatunk ebbe a pozícióba a kezdőpozíció ismeretének függvényében. Először is a mozgási egyenletet át kell írnunk mátrix formába, ami a következő képpen fog alakulni:\\
+
+\( \begin{pmatrix}
+	\dot{x}\\
+	\dot{y}\\
+	\dot{\delta}
+\end{pmatrix} \)
+=
+\( \begin{pmatrix}
+	\cos\delta & 0\\
+	\sin\delta & 0\\
+	0 & 1
+\end{pmatrix} \)
+$ \cdot $ 
+\( \begin{pmatrix}
+	v\\
+	\gamma
+\end{pmatrix} \)
+\\\\\\
+Ezek alapján a ezeket változókat vezethetjük be, hogy irányítani tudjuk a járművet a célban megadott pozíció felé:
+\begin{itemize}
+	\item[] $ dist = \sqrt{\Delta x^2 + \Delta y^2} $
+	\item[] $ \alpha = \tan^{-1} \cdot \dfrac{\Delta y}{\Delta x} - \delta $
+	\item[] $ \beta = -\delta - \alpha $
+\end{itemize}
+ 
+Ezeket szintén mátrix formába rendezve a következőket kapjuk:\\
+
+\( \begin{pmatrix}
+	\dot{dist}\\
+	\dot{\alpha}\\
+	\dot{\beta}
+\end{pmatrix} \)
+=
+\( \begin{pmatrix}
+	\cos\alpha & 0\\\\
+	\dfrac{\sin\alpha}{dist} & -1\\\\
+	-\dfrac{\sin\alpha}{dist} & 0
+\end{pmatrix} \)
+$ \cdot $ 
+\( \begin{pmatrix}
+	v\\
+	\gamma
+\end{pmatrix} \)
+\\\\\\
+és feltételezve, hogy a célpozíció a jármű előtt van, az autó irányítása így történik:\\
+
+$ v = K_{dist} \cdot dist $\\
+
+$ \gamma = K_\alpha \cdot \alpha + K_\beta \cdot \beta $\\\\
+ahol a konstans értékekre a következő feltételek vonatkoznak: $ K_{dist} > 0, \quad K_\beta < 0, \quad K_\alpha - K_\beta > 0  $\\
+Ellenkező esetben ennek az alkalmazott sebességnek a negáltját kell vennünk, tehát tolatni kell a járművel:\\
+
+$ v = -v $, \qquad ha $\alpha \not\in \left(-\dfrac{\pi}{2}, \dfrac{\pi}{2} \right) \quad $ (ez cél szerint változtatható lesz)\\\\
+Az lenne a lényege ennek a megoldásnak, hogy a a definiált képletek $ K_{dist} \cdot dist $ és $ K_\alpha \cdot \alpha $ egy vonal mentén vezetik a járművet a cél felé, amíg $ K_\beta \cdot \beta $ ezt a vonalat folyamatosan a cél irányba fordítja.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/moving_vehicle.png}
+\caption{A jármű mozgása}
+\label{fig:moving_vehicle}
+\end{figure}
+
+\subsection{Rotációs mátrix definiálása}
+
+A pozícionáláshoz szükséges pontokat, vektorokat és az azokkal végzett műveleteket szeretném egy kicsit részletezni. Mint már említettem, itt is egy Descartes-féle koordinátarendszerben dolgozunk, melyben egy-egy ponthoz az $ x $ és $ y $ tengely irányába mutató egységvektorok is tartoznak, tehát egy pont így írható le:\\
+
+$ P = x\vec{x} + y\vec{y} $\\\\
+Az A-ból B-be való eljutás egyfajta eltolás lesz az A koordinátán. Vagy inkább koordinátarendszeren, mivel a forgatást tekintve a tengelyek, mint vektorok is más-más irányba mutatnak majd. Tehát mondjuk, hogy a B koordináta el lett tolva egy $ t = (x, y) $ vektor által és el lett forgatva egy $ \delta $ szöggel. Ezt a \ref{fig:a_to_b_point} ábra szemlélteti:
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/A_to_B_point.png}
+\caption{A jármű mozgása}
+\label{fig:a_to_b_point}
+\end{figure}
+
+\newpage
+
+Ha csak a helyzet változást vesszük figyelembe, akkor egy olyan elmozdulást tapasztalunk, amikor a kapott pont tengelyei párhuzamosak a kezdőpontéra. Legyen ez az új pont $ T $, és az imént felírt képlet alapján:\\
+
+$ {}^{T}p = {}^{T}x\vec{x}{}_{T} + {}^{T}y\vec{y}{}_{T} $  =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{T} & \vec{y}{}_{T}
+\end{pmatrix}	 
+\)
+\(
+\begin{pmatrix}
+	{}^{T}x\\
+	{}^{T}y
+\end{pmatrix}	 
+\)\\\\
+A $ B $ pont, már az elforgatást is tartalmazza, mely 2 egység vektorral írható le:\\
+
+$ \vec{x}{}_{B} = \cos\delta\vec{x}{}_{T} + \sin\delta\vec{y}{}_{T} $\\
+
+$ \vec{y}{}_{B} = -\sin\delta\vec{x}{}_{T} + \cos\delta\vec{y}{}_{T} $\\\\
+ami mátrix formában felírva a következő:\\
+
+\(
+\begin{pmatrix}
+	\vec{x}{}_{B} & \vec{y}{}_{B}
+\end{pmatrix}
+\) =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{T} & \vec{y}{}_{T}
+\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	\cos\delta & -\sin\delta\\
+	\sin\delta & \cos\delta
+\end{pmatrix}
+\)\\\\
+A keresett $ P $ pont pedig az előzőekhez hasonlóan felírva:\\
+
+$ {}^{B}p = {}^{B}x\vec{x}{}_{B} + {}^{B}y\vec{y}{}_{B} $  =
+\(
+\begin{pmatrix}
+	\vec{x}{}_{B} & \vec{y}{}_{B}
+\end{pmatrix}	 
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+Majd $ B $-vel megszorozva:\\
+
+$ {}^{B}p $ =
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\)
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta\\
+		\sin\delta & \cos\delta
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+Majd a jobb oldali együtthatókat egyenletként felírva a következőt kapjuk:\\
+
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\) = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta\\
+		\sin\delta & \cos\delta
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\qquad \Rightarrow \qquad\)  
+\(
+	\begin{pmatrix}
+		\vec{x}{}_{T} & \vec{y}{}_{T}
+	\end{pmatrix}
+\) = 
+$ {}^{T}R{}_{B} $
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\)\\\\
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.70]{images/T_to_B_point.png}
+\caption{A jármű négy pontja a programban}
+\label{fig:t_to_b_point}
+\end{figure}
+
+És ezzel leírtuk, hogyan forgattuk el a $ T $ pontot a $ B $ pontba. Ez lenne maga a rotációs mátrix. A fent leírt műveleteket a \ref{fig:t_to_b_point} ábra szemlélteti.
+\\\\
+Ehhez még hozzá kell adnunk az eltolást, ami az $ A $ pontból a $ B $ pontba történik. Ezt egy egyszerű vektoros hozzáadással tehetjük meg:\\
+
+
+\(
+\begin{pmatrix}
+	{}^{A}x\\
+	{}^{A}y
+\end{pmatrix}	 
+\) = 
+\(
+\begin{pmatrix}
+	{}^{T}x\\
+	{}^{T}y
+\end{pmatrix}	 
+\) + 
+\(
+\begin{pmatrix}
+	x\\
+	y
+\end{pmatrix}
+\) =
+\(
+\begin{pmatrix}
+	\cos\delta & -\sin\delta\\
+	\sin\delta & \cos\delta
+\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y
+\end{pmatrix}	 
+\) + 
+\(
+\begin{pmatrix}
+	x\\
+	y
+\end{pmatrix}	 
+\)\\\\ = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta & x\\
+		\sin\delta & \cos\delta & y
+	\end{pmatrix}
+\)
+\(
+\begin{pmatrix}
+	{}^{B}x\\
+	{}^{B}y\\
+	1
+\end{pmatrix}	 
+\)\\\\
+Míg a $2 x 2$ -es mátrix segítségével a forgatást oldottuk meg, magát az elmozdulást egy $ 3 x 3 $ -as adja majd. Egy $t = (x, y) $ vektort fel tudunk írni homogén formában a dimenziószámot egyel növelve, ilyenkor általában egyet adunk meg a harmadik koordinátának. Így a $ P $ pontra vonatkozó transzformációt fel tudjuk írni a következőképpen:\\
+
+$ {}^{A}\vec{p} $ = 
+\(
+\begin{pmatrix}
+	{}^{T}R{}_{B} & t\\
+	0_{1x2} & 1
+\end{pmatrix}	 
+\)
+$ {}^{B}\vec{p} $\\\\
+Ezek alapján a végső transzformáció:\\
+
+$P(x, y, \delta)$ = 
+\(
+	\begin{pmatrix}
+		\cos\delta & -\sin\delta & x\\
+		\sin\delta & \cos\delta & y\\
+		0 & 0 & 1
+	\end{pmatrix}
+\) 
