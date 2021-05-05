@@ -342,7 +342,7 @@ A kereső algoritmus alapja, hogy valamilyen módszerrel meg tudjuk határozni a
 \end{itemize}
 
 \begin{python}
-    def heuristic(self, start, goal):
+    def calculate_distance(self, start, goal):
         return math.sqrt(((start[0]) - goal[0]) ** 2 +
                          ((start[1]) - goal[1]) ** 2)
 \end{python}

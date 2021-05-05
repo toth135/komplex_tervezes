@@ -12,7 +12,23 @@ class AStarPathFinder(object):
         self.obstacles.append(self.store_obstacle(8, -3, 4, 2))
         self.obstacles.append(self.store_obstacle(23, -2, 4, 2))
 
-    def heuristic(self, start, goal):
+    def store_obstacle(self, x1, y1, width, height):
+        """
+        Collects every coordinate that is inside an obstacle
+        and stores it in a list of tuples
+        :param x1: x left bottom
+        :param y1: y left bottom
+        :param width: width
+        :param height: height
+        :return: list of obstacle coordinates
+        """
+        obstacles = []
+        for i in range(x1, (x1 + width + 1)):
+            for j in range(y1, (y1 + height + 1)):
+                obstacles.append((i, j))
+        return obstacles
+
+    def calculate_distance(self, start, goal):
         """
         :param start: start position
         :param goal: goal position
@@ -20,6 +36,8 @@ class AStarPathFinder(object):
         """
         return math.sqrt(((start[0]) - goal[0]) ** 2 +
                          ((start[1]) - goal[1]) ** 2)
+        # return max(abs(start[0] - goal[0]), abs(start[1] - goal[1]))
+        # return abs(start[0] - goal[0]) + abs(start[1] - goal[1])
 
     def get_neighbours(self, position):
         """
@@ -63,22 +81,6 @@ class AStarPathFinder(object):
                 elif end == obs:
                     raise RuntimeError('End coordinate is inside an obstacle!')
 
-    def store_obstacle(self, x1, y1, x2, y2):
-        """
-        Collects every coordinate that is inside an obstacle
-        and stores it in a list of tuples
-        :param x1: x left bottom
-        :param y1: y left bottom
-        :param x2: width
-        :param y2: height
-        :return: list of obstacle coordinates
-        """
-        obstacles = []
-        for i in range(x1, (x1 + x2 + 1)):
-            for j in range(y1, (y1 + y2 + 1)):
-                obstacles.append((i, j))
-        return obstacles
-
 
 def a_star_search(start, end, map):
     """
@@ -95,7 +97,7 @@ def a_star_search(start, end, map):
 
     # Initialize starting values
     g[start] = 0
-    f[start] = map.heuristic(start, end)
+    f[start] = map.calculate_distance(start, end)
 
     closed_nodes = set()
     opened_nodes = {start}
@@ -138,7 +140,7 @@ def a_star_search(start, end, map):
             # Adopt this g score
             came_from[neighbour] = current
             g[neighbour] = candidate_g
-            h = map.heuristic(neighbour, end)
+            h = map.calculate_distance(neighbour, end)
             f[neighbour] = g[neighbour] + h
 
     raise RuntimeError("A* failed to find a solution")
@@ -148,7 +150,7 @@ if __name__ == "__main__":
     map = AStarPathFinder()
 
     start = (0, 0)
-    goal = (21, 3)
+    goal = (20, 3)
 
     path, cost = a_star_search(start, goal, map)
     print("path: ", path)
@@ -171,33 +173,11 @@ if __name__ == "__main__":
     plt.gca().add_patch(rectangle5)
 
     # Actual A* path plot:
-    # plt.plot(x_coords, y_coords, 'black')
-
-    # Scatter A* path plot
-    plt.scatter(x_coords, y_coords)
+    plt.plot(x_coords, y_coords, 'black')
 
     # Mark start and end positions with red and green dots
     plt.plot(start[0], start[1], 'ro')
     plt.plot(goal[0], goal[1], 'go')
 
-    # Polynomial curve fitting
-    degree = round(cost / 3)
-    f = np.poly1d(np.polyfit(x_coords, y_coords, degree))
-    x_values = np.linspace(min(x_coords), max(x_coords), 100)
-    plt.plot(x_values, f(x_values))
-    print('\nf:')
-    print(f)
-
-    # 1st and 2nd derivative of f polynomial
-    f_der1 = np.polyder(f, m=1)
-    f_der2 = np.polyder(f, m=2)
-    print('\nf_der1:')
-    print(f_der1)
-    print('\nf_der2:')
-    print(f_der2)
-
-    plt.plot(x_values, f_der1(x_values), 'black')
-    plt.plot(x_values, f_der2(x_values), 'red')
-
-    # plt.savefig('astar.png')
+    # plt.savefig('a_star.png')
     plt.show()
