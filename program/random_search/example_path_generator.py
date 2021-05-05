@@ -58,6 +58,14 @@ def remove_nesting(nested_list):
             collision_list.append(i)
 
 
+def generate_random_angles_absolute(number_of_turns):
+    random_angles = []
+    for i in range(number_of_turns):
+        angle = random.randint(-15, 15)
+        random_angles.append(angle)
+    return random_angles
+
+
 def generate_random_angles_relative(number_of_turns):
     rel_angles = []
     angles = []
