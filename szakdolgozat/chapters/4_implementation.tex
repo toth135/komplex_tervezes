@@ -332,15 +332,20 @@ A kereső algoritmus alapja, hogy valamilyen módszerrel meg tudjuk határozni a
 \begin{itemize}
 	\item Manhattan távolság\\
 	Egyszerűbb esetekben érdemes alkalmazni, mikor a mozgás csak 4 irányba történhet az adott pontból. \\
-	Képlete: h = abs(start.x - goal.x) + abs(start.y - goal.y)
+	Képlete: 
+	\begin{python}
+	abs(start[0] - goal[0]) + abs(start[1] - goal[1])
+	\end{python}
 	\item Diagonális távolság\\
 	Akkor érdemes használni, mikor 8 irányban tudunk elmozdulni az adott pontból. Jelen esetben ez is használható lenne, de az elvárt eredményhez ez sem teljesen optimális.\\
-	Képlete: h = max( abs(start.x - goal.x), abs(start.y - goal.y) )
+	Képlete:
+	\begin{python}
+	abs(start[0] - goal[0]) + abs(start[1] - goal[1])
+	\end{python}
 	\item Euklideszi távolság\\
 	Ezt a fajta távolság becslést fogom használni, mivel minden irányban el lehet mozdulni és egy reális útvonalat kaphatunk végeredményként.\\
-	Képlete: h = sqrt( (start.x - goal.x) ** 2 + (start.y - goal.y) ** 2 )
+	Képlete a következő függvény visszatérési értéke:
 \end{itemize}
-
 \begin{python}
     def calculate_distance(self, start, goal):
         return math.sqrt(((start[0]) - goal[0]) ** 2 +

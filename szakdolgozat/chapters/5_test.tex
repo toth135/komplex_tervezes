@@ -1,43 +1,133 @@
 \Chapter{Az elkészült függvénykönyvtár bemutatása}
 
-% TODO: Példák kellenének, hogy egy-egy probléma megoldására hogyan használható az elkészített szoftver.
-\Section{Útvonalkereső algoritmus}
+\Section{Random keresés}
 
-A programrészek készítésekor próbáltam arra törekedni, hogy minél jobban személyre szabhatóbbak legyenek az egységek. Az A* algoritmus integrálása ezáltal úgy történhet, hogy mi magunk definiálhatunk egy környezetet, amiben a keresés fog történni. Ez ugyan időt vesz igénybe, viszont olyan pályát tudunk készíteni, amilyet mi szeretnénk. Továbbfejlesztési lehetőség lenne, hogy ne csak téglalap alakú objektumokat tudjunk meghatározni, hanem egyéb más alakzatokat is, így viszont további függények kellenének a pontok akadályba ütközésének vizsgálatára.
+\subsection{Példa útvonal generáló python fájl}
 
-\subsection{A* felhasználási módja}
+A $random\_search/example\_path\_generator.py$ fájl függvényeinek használatát szeretném bemutatni, ami kísérleti jelleggel készült. A paraméterek nagyban meghatározzák a generált útvonal hosszát, kezdő és végpontját, valamint a kanyarok élességét. 
 
-A programban az algoritmus működéséhez szükséges számításokat osztályba szerveztem, ahol függvények vannak definiálva erre a célra. Név szerint AStarPathFinder()-ként szerepel. Magát az osztályt inicializálni kell az akadályokkal, ami majd a környezetet adja, hasonlóan, ahogy a példában is szerepel:
+Az $is\_in\_wall(x, y)$ függvényt az ütközésdetektáláshoz használja a program, ezt nem szükséges paraméterezni. Visszaadja viszont, hogy volt-e ütközés, az objektum indexét, valamint a koordinátákat ahol az ütközés történt. \textbf{A fejezet további részeiben a függvényekből csak a paraméterlistát és a visszatérési értéke(ke)t, vagy egyéb olyan változókat fogok bemutatni, amik segítségével módosítható a kimenet.}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.75]{images/store_obstacles.png}
-\caption{Akadályok tárolása}
-\label{fig:store_obstacles}
-\end{figure}
+\begin{python}
+def is_in_wall(x, y):
 
-Külön függvény fogja összegyűjteni az akadályok pontjait, nekünk elég csak a kezdőpontot, valamint a szélességet és a magasságot megadni. Ezt az osztályt érdemes külön modulba kiszervezni, valamint az algoritmust egy másik metódus valósítja meg. Ezért fontos, hogy az osztály metódusai elérhetőek legyenek a keresést megvalósító függvény számára. Ehhez példányosítani kell az osztályt, és a függvény harmadik paramétere lenne ez a példány, amikor meghívjuk. A kereső algoritmus így fogja felismerni az osztályon belül definiált metódusokat. Visszatérési értékként megkapjuk az útvonal koordinátáit, valamint a költséget. Eldönthetjük mire lesz szükségünk ezek közül és ez alapján valamilyen formában ezt megjeleníteni.
+	return collided, collisions
+\end{python}
 
-\Section{A jármű mozgása}
+A $ generate\_random\_angles\_absolute(number\_of\_turns) $ és a\\ $ generate\_random\_angles\_relative(number\_of\_turns) $ függvényeket meghívva generálhatóak az elfordulási szögek, a paraméter változtatásával az út hosszát tudjuk módosítani, a törzsön belül szereplő $ angle $ változóval pedig a kanyarodások élességét.
 
-A jármű mozgását szimuláló programrész pedig megoldást ad a a mozgás során fellépő problémákra. Végeredményként animációkat tudunk készíteni vele és tudjuk elemezni, amit leprogramoztunk. 
+\begin{python}
+def generate_random_angles_relative(number_of_turns):
 
-\subsection{A mozgatás felhasználási módja}
-Egy python fájlban található minden, ami szükséges a futtatáshoz. Lényegében 3 függvény és egy $ main $ segítségével működik az egész, valamint globális változókkal. Ezeket lehet fix értékekkel helyettesíteni, a tesztelés miatt volt szükség a kiszervezésükre, hogy több esetet tudjak generálni a parkolós mozgásra. Lehetőség van még a jármű méretének beállítására is:
+	for i in range(number_of_turns):
+        	angle = random.randint(-25, 25)
+        
+    return rel_angles
+\end{python}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.75]{images/init_for_vehicle_moving.png}
-\caption{Inicializálás}
-\label{fig:init_for_vehicle_moving}
-\end{figure}
+A $ calc\_path(pos\_x, pos\_y, steering\_angles) $ függvény útvonal számítást végez és ütközést vizsgál. Hívásakor a kezdőpozíciót kell megadni az első két paraméterben, valamint a generált szögek listáját. Az első visszatérési értéke az útvonal, a második az ütközések koordinátái.
 
-A fájlon belül a $ moving\_vehicle $ függvény hívja meg a kirajzoló metódust, ami pedig a rotációs mátrixot, így ezeket célszerű együtt tárolni. A kirajzoló függvényt lehet helyettesíteni a felhasználási célnak megfelelő egyéb függvényekkel. Viszont ehhez a jármű pontjait meghatározó mátrix szorzást is át kell helyeznünk. Ennek pedig minden lépésnél le kell futnia, így kaphatjuk vissza mindig a forgatott járművet.
+\begin{python}
+def calc_path(pos_x, pos_y, steering_angles):
 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.75]{images/rotation.png}
-\caption{A jármű négy pontja}
-\label{fig:rotation}
-\end{figure}
+	return path, collisions
+\end{python}
+
+A visszatérési értékeket pedig változókban eltárolva, az eredményt a plot() függvény segítségével meg lehet jeleníteni. 
+
+\subsection{Hisztogram készítés}
+
+A $ random\_search/x\_y\_endpoints\_histogram.py $ és az\\ $ x\_y\_endpoints\_histogram.py $ fájlokat használhatjuk a 2 dimenziós hisztogramok készítésére, mely az előbbiekben bemutatott függvényekből áll, valamint egy for ciklusból, ami a generálás mennyiségét adja meg. Ezt a következő helyen tudjuk paraméterezni, ahol jelenleg 10000 esetet generál futtatáskor:
+
+\begin{python}
+for i in range(10000):
+    def generate_random_angles_relative(number_of_turns):
+\end{python}
+
+\Section {A* keresés}
+
+\subsection{Az útvonal keresés python fájl}
+
+Az A* keresést megvalósító fájl a $ navigator/pathfinder.py $ lenne. Ezene belül található Az $ AStarPathFinder $ osztály, amit inicializálunk akadályokkal az $\_\_init\_\_(self)$ függvényen belül. Itt lehet megadadni még plusz akadályokat, vagy átszervezni azokat. A többi függvényt az algoritmus fogja használni, amiket már korábban kifejtettem és megnéztük a működésüket. Ahhoz, hogy ez a kereső függvény használni tudja ezeket a metódusokat, paraméterként kell átadni ennek az osztálynak a példányát és erre fog hivatkozni a belső számításoknál. A hivatkozások a következő példához hasonlóan történnek:
+
+\begin{python}
+def a_star_search(start, end, map):
+
+	map.check_points(start, end)
+\end{python}
+
+A következő lépés itt a $ main $ függvény, ahol a példányosításnak történnie kell. Majd meghatározzuk a másik két paramétert is, ami a kezdő és végpozíciók koordinátáit jelenti. A kereső függvény, ami az algoritmust valósítja meg az osztály függvényeit használva az útvonallal és annak költségével tér vissza. Ennek az eredményét szintén a plot() függvénnyel nézhetjük meg legegyszerűbben.
+
+\begin{python}
+if __name__ == "__main__":
+    map = AStarPathFinder()
+
+    start = (0, 0)
+    goal = (20, 3)
+
+    path, cost = a_star_search(start, goal, map)
+    
+    x_coords = list(zip(*path))[0]
+    y_coords = list(zip(*path))[1]
+    
+    plt.plot(x_coords, y_coords, 'black')
+    plt.plot(start[0], start[1], 'ro')
+    plt.plot(goal[0], goal[1], 'go')
+\end{python}
+
+\Section {A jármű mozgása}
+
+\subsection{A mozgatáshoz használt python fájl}
+
+A mozgatáshoz a $ positioning/moving\_vehicle $ fájlt kell futtatni. Ennek paraméterezhetősége kezdetleges, változókkal tudjuk a mozgás ívét meghatározni. Itt arra kell figyelni leginkább, hogy a $ k\_alpha $ pozitív szám legyen, valamint a $ k\_beta $ negatív. Példányosításra kerül a Parkoló osztály, aminek a kirajzoló metódusát később hívjuk meg. Valamint a jármű mérete állítható. 
+
+\begin{python}
+k_distance = 2
+k_alpha = 6
+k_beta = -4
+dt = 0.01
+
+draw = parking_lot.ParkingLot()
+
+p1_init = np.array([1, -0.5, 1])
+p2_init = np.array([1, 0.5, 1])
+p3_init = np.array([-1, 0.5, 1])
+p4_init = np.array([-1, -0.5, 1])
+\end{python}
+
+A $ plot\_vehicle(x, y, heading\_angle, x\_path, y\_path, steps) $ függvény játszik szerepet a kirajzolásban és az animáció készítésben,  mivel paraméterként mindent megkap a jármű mozgásáról, valamint a lépésekről. Ez a képek generálásához nyújt segítséget, ugyanis növekményes sorszámmal látja el őket. A rotációs mátrix is a törzsön belül kerül meghívásra, ahogy a parkoló kirajzolása is. A $ moving\_vehicle(x\_start, y\_start,$ \\ $start\_heading\_angle, x\_goal, y\_goal, goal\_heading\_angle) $ metódus kapja meg a kezdő és végpozíció paramétereit és végzi el a számításokat. 
+
+\begin{python}
+def plot_vehicle(x, y, heading_angle, x_path, y_path, steps):
+
+	r = rotation_matrix(x, y, heading_angle)
+	
+	draw.plot_parking_lot()
+	
+	plt.plot(x_path, y_path, 'b--')
+    	plt.savefig('pictures/'f'fig-0{steps}.png')
+\end{python}
+
+A $ moving\_vehicle $ függvény törzsében még fontos szerepet játszik a tolatás feltétele, ennek az értékét is érdemes változtatni kisebbre, ha egy parkoló helyről való kitolatásról van szó. Az ehhez tartozó animációnál a feltétel a következő volt:
+
+\begin{python}
+if alpha > pi/3 or alpha < -pi/3:
+      v = -9
+\end{python}
+
+Itt is a $ main $ függvényben adhatjuk meg a paraméterek értékeit:
+
+\begin{python}
+if __name__ == '__main__':
+    x_start = 6.5
+    y_start = 8
+    start_heading_angle = pi/2
+    x_goal = 18.5
+    y_goal = 9
+    goal_heading_angle = -pi/2
+
+    moving_vehicle(x_start, y_start, start_heading_angle, x_goal, y_goal,
+     goal_heading_angle)
+\end{python}
+
 
