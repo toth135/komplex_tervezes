@@ -73,4 +73,3 @@ class ParkingLot:
 
         for p in plt_horizontals_2:
             plt.plot([v[0] for v in p], [v[1] for v in p], 'k-')
-

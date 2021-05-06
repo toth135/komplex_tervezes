@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import cos, sin, sqrt, atan2, pi
-from python.program.navigator import parking_lot
-
+from python.program.positioning import parking_lot
 
 k_distance = 2
 k_alpha = 6
@@ -11,7 +10,6 @@ dt = 0.01
 
 draw = parking_lot.ParkingLot()
 
-# Corners of rectangle like vehicle when pointing to the right (0 radians)
 p1_init = np.array([1, -0.5, 1])
 p2_init = np.array([1, 0.5, 1])
 p3_init = np.array([-1, 0.5, 1])
@@ -99,7 +97,7 @@ def plot_vehicle(x, y, heading_angle, x_path, y_path, steps):
     """
 
     r = rotation_matrix(x, y, heading_angle)
-    # using the rotation matrix to make the vehicle follow the path
+
     p1 = np.matmul(r, p1_init)
     p2 = np.matmul(r, p2_init)
     p3 = np.matmul(r, p3_init)

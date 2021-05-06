@@ -2,11 +2,11 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 import random
-import matplotlib.ticker as ticker
+
 
 x_path_end_position = []
 y_path_end_position = []
-endpoint = []
+
 
 for i in range(10000):
     def generate_random_angles_relative(number_of_turns):
@@ -49,17 +49,6 @@ for i in range(10000):
 
     x_path_end_position.append(x_random_relative[-1])
     y_path_end_position.append(y_random_relative[-1])
-
-
-# plt.hist(endpoint, 50, edgecolor='black', color="#2ecc71")
-# plt.title("Distribution of end position y coordinates")
-# plt.xlabel("end position y coordinate")
-# plt.ylabel("value")
-# ax_y_coord = plt.axes()
-# ax_y_coord.xaxis.set_major_locator(ticker.MultipleLocator(5))
-# ax_y_coord.xaxis.set_minor_locator(ticker.MultipleLocator(1))
-# plt.savefig('fig2.png')
-# plt.show()
 
 
 plt.hist2d(x_path_end_position, y_path_end_position, bins=(40, 40), cmap=plt.cm.jet)

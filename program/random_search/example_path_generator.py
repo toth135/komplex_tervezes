@@ -5,27 +5,6 @@ import random
 
 obstacle_coordinates = []
 
-
-def store_obstacle(x1, y1, x2, y2):
-    obstacles = []
-    for i in range(x1, (x1 + x2 + 1)):
-        for j in range(y1, (y1 + y2 + 1)):
-            obstacles.append((i, j))
-    return obstacles
-
-
-obstacle_coordinates.append(store_obstacle(2, 2, 4, 2))
-obstacle_coordinates.append(store_obstacle(8, 8, 2, 4))
-
-
-print(obstacle_coordinates)
-
-for index, obstacle in enumerate(obstacle_coordinates):
-    print(index)
-    for coord in obstacle:
-        print(coord)
-
-
 obstacle1 = (2, 2, 6, 3)
 obstacle2 = (8, 8, 6, 4)
 obstacle3 = (15, 2, 4, 2)
@@ -61,7 +40,7 @@ def remove_nesting(nested_list):
 def generate_random_angles_absolute(number_of_turns):
     random_angles = []
     for i in range(number_of_turns):
-        angle = random.randint(-15, 15)
+        angle = random.randint(-25, 25)
         random_angles.append(angle)
     return random_angles
 
@@ -108,7 +87,6 @@ random_relative_path_collisions = calc_path(0, 0, rand_angles_rel)[1]
 x_random_relative = list(zip(*random_relative_path))[0]
 y_random_relative = list(zip(*random_relative_path))[1]
 
-obstacle_objects = []
 x_random_relative_collision = []
 y_random_relative_collision = []
 
