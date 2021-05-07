@@ -4,7 +4,7 @@
 
 Dolgozatom részben arra fókuszál, hogy megoldást tudjon találni a jármű által bejárt út megtervezésére. Ezt lehetőleg úgy kellene megvalósítani, hogy a függvények jól paraméterezhetőek legyenek, minél kevesebb korlátozó tényezővel. A következő szempontokat kell figyelembe venni, mint célfüggvények:
 \begin{itemize}
-	\item Kétdimentiós környezet kialakítása korlátok nélküli bejárható pontokkal
+	\item Kétdimenziós környezet kialakítása korlátok nélküli bejárható pontokkal
 	\item Kezdő- és végpozíció paraméterezhetősége
 	\item A kanyarodások követhetőek legyenek egy jármű számára
 	\item A lehető legrövidebb útvonalon érkezés a célpozícióba
@@ -20,7 +20,7 @@ Következő megoldásnak az A* algoritmust választottam, amely nagyjából eleg
 
 \Section{A jármű orientációja mozgás közben}
 
-Másrészt a dolgozatomban kitérek a járművek mozgása közben fellépő pozícionálási porblémákra. Különböző irányszögeket kell definiálni ahhoz, hogy szimulálni tudjuk a mozgási folyamatot, valamint egy sebességet, amivel majd az autó haladni tud. Ezeket egy parkolóban megfelelően lehet majd szemléltetni és a következő célfüggvényeket kell figyelembe venni:
+A dolgozatomban kitérek a járművek mozgása közben fellépő pozícionálási porblémákra is. Különböző irányszögeket kell definiálni ahhoz, hogy szimulálni tudjuk a mozgási folyamatot, valamint egy sebességet, amivel majd az autó haladni tud. Ezeket egy parkolóban megfelelően lehet majd szemléltetni és a következő célfüggvényeket kell figyelembe venni:
 \begin{itemize}
 	\item A sebesség arányos definiálása
 	\item A kanyarodási szög figyelembe vétele
@@ -30,7 +30,7 @@ Másrészt a dolgozatomban kitérek a járművek mozgása közben fellépő poz�
 	\item Ütközés detektálása parkoló autók esetén
 \end{itemize}
 
-Ez a megoldás útvonalat tervez, viszont sokkal több szempontot figyelembe venne a tervezésen felül is. Nyomon tudná követni a jármű irányváltoztatásait az említett célfüggvények alapján és a sebesség függvényében alakulna a pálya íve is, amíg elér a célpozícióba.
+Ez a megoldás útvonalat tervez, viszont sokkal több szempontot venne figyelembe a tervezésen felül is. Nyomon tudná követni a jármű irányváltoztatásait az említett célfüggvények alapján és a sebesség függvényében alakulna a pálya íve is, amíg elér a célpozícióba.
 
 
 

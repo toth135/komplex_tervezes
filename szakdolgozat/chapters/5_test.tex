@@ -48,7 +48,7 @@ for i in range(10000):
 
 \subsection{Az útvonal keresés python fájl}
 
-Az A* keresést megvalósító fájl a $ navigator/pathfinder.py $ lenne. Ezene belül található Az $ AStarPathFinder $ osztály, amit inicializálunk akadályokkal az $\_\_init\_\_(self)$ függvényen belül. Itt lehet megadadni még plusz akadályokat, vagy átszervezni azokat. A többi függvényt az algoritmus fogja használni, amiket már korábban kifejtettem és megnéztük a működésüket. Ahhoz, hogy ez a kereső függvény használni tudja ezeket a metódusokat, paraméterként kell átadni ennek az osztálynak a példányát és erre fog hivatkozni a belső számításoknál. A hivatkozások a következő példához hasonlóan történnek:
+Az A* keresést megvalósító fájl a $ navigator/pathfinder.py $ lenne. Ezene belül található Az $ AStarPathFinder $ osztály, amit inicializálunk akadályokkal az $\_\_init\_\_(self)$ függvényen belül. Itt lehet megadni még plusz akadályokat, vagy átszervezni azokat. A többi függvényt az algoritmus fogja használni, amiket már korábban kifejtettem és megnéztük a működésüket. Ahhoz, hogy ez a kereső függvény használni tudja ezeket a metódusokat, paraméterként kell átadni ennek az osztálynak a példányát és erre fog hivatkozni a belső számításoknál. A hivatkozások a következő példához hasonlóan történnek:
 
 \begin{python}
 def a_star_search(start, end, map):

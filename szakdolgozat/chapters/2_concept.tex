@@ -2,7 +2,7 @@
 
 \Section{Kétkerekű modell kanyarodási íve}
 
-Érdemes lehet előrször a kétkerekű modellt megvizsgálnunk, ugyanis az itt meghatározott képletek adják alapul a négykerekű változatnál használt formulákat. Először is meg kell határoznunk a kanyarodás ívét, ami jelen esetben egy adott elfordulási ($\alpha$) szög mellett tehető meg. Ahogy ez a szög változik úgy fog változni maga az ív is, amin a jármű haladni fog. Ezért első lépésben a sugarat kell megkeresnünk, mert az adott sugárral a középpont köré húzható kör fogja adni az útvonalat. 
+Érdemes lehet először a kétkerekű modellt megvizsgálnunk, ugyanis az itt meghatározott képletek adják alapul a négykerekű változatnál használt formulákat. Először is meg kell határoznunk a kanyarodás ívét, ami jelen esetben egy adott elfordulási ($\alpha$) szög mellett tehető meg. Ahogy ez a szög változik úgy fog változni maga az ív is, amin a jármű haladni fog. Ezért első lépésben a sugarat kell megkeresnünk, mert az adott sugárral a középpont köré húzható kör fogja adni az útvonalat. 
 A kétkerekű (bicikli) modell kanyarodási ívének meghatározása 2 dologtól függ:\newline
 \phantom{len} - a tengelytávolságtól (w),\newline
 \phantom{len} - az első kerék kanyarodási szögétől ($\alpha$).\newline
@@ -154,7 +154,9 @@ Ebben az esetben alapvetően három paraméterrel tudjuk a jármű pozícióját
 A számításokhoz a sebességet is figyelembe kell majd venni, ami a jármű pozícióját tekintve x irányban kap értéket, y-ban pedig mindig 0 lesz, ezzel elkerülve az oldal irányú csúszást a kerekek mozgásának megfelelően. A \ref{fig:position} ábrán ezt a részt a szaggatott vonalakkal jelölöm, amik mindig merőlegesek a jármű kerekeire és a forgásközéppontból indulnak. A jármű referenciapontja mindig egy kör alakú pályát követ, aminek a szögsebessége a következő képlettel leírható:\\
 
 $\dot{\delta} = \dfrac{v}{R},$ \\\\
-ahol $ v $ a sebesség, $ R $ pedig a hátsó kerék körpályájának a sugara. A későbbiekben $ \gamma $-val jelöljük majd a kanyarodási szöget, ami egy bizonyos értéknél nem lehet nagyobb, tekintve a jármű mechanikáját. Ennek a szögnek a maximum értéke határozza meg a kanyarodási ív sugarának minimális értékét. Egy állandó kanyarodási szög mellett az autó egy körpályán halad, ami miatt a bejárni kívánt út ilyen körívekből épül fel. Tehát minden időpillanatban a kanyarodási szög kis mértékben változik, így az út követése egyszerűbbé válik. Ha egy négykerekű járművet veszünk figyelembe, akkor a kormányzott kerekek különböző sugarú íveket járnak be, és ezzel együtt a két kanyarodó kerék különböző szögekben is fordulnak el. Tehát itt $ \gamma_{inner} $  és $ \gamma_{outer} $ szögeket is meg kell különböztetni, mint a kanyarodás irányát tekintve külső és belső elfordulási szögeket az Ackerman mechanizmus alapján. 
+ahol $ v $ a sebesség, $ R $ pedig a hátsó kerék körpályájának a sugara. A későbbiekben $ \gamma $-val jelöljük majd a kanyarodási szöget, ami egy bizonyos értéknél nem lehet nagyobb, tekintve a jármű mechanikáját. Ennek a szögnek a maximum értéke határozza meg a kanyarodási ív sugarának minimális értékét.
+
+Egy állandó kanyarodási szög mellett az autó egy körpályán halad, ami miatt a bejárni kívánt út ilyen körívekből épül fel. Tehát minden időpillanatban a kanyarodási szög kis mértékben változik, így az út követése egyszerűbbé válik. Ha egy négykerekű járművet veszünk figyelembe, akkor a kormányzott kerekek különböző sugarú íveket járnak be, és ezzel együtt a két kanyarodó kerék különböző szögekben is fordulnak el. Tehát itt $ \gamma_{inner} $  és $ \gamma_{outer} $ szögeket is meg kell különböztetni, mint a kanyarodás irányát tekintve külső és belső elfordulási szögeket az Ackerman mechanizmus alapján. 
 A jármű paraméterei a következő mozgási egyenlet szerint fognak változni:
 \begin{itemize}
 	\item[] $ \dot{x} = v \cdot \cos\delta $

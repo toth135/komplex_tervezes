@@ -199,7 +199,7 @@ remove_nesting(random_relative_path_collisions)
 A listába szervezett akdályokat szemléltetés képpen rajzoljuk ki a területre a \\
 $ matplotlib.patches.Rectangle $ funkciót használva. Majd a $ plot() $ függvénnyel az útvonalat kirajzolni, ha pedig volt ütközés, azt legendként jelenítem meg.\\\\
 Ismét bemutatnék két példa útvonalat, amelyet a hivatkozott kódrészletek segítségével generáltam ezúttal akadályokkal. Néhány futtatás után kaptunk két hasonló útvonalat, az $ y $ végpontnál talán kissé több az eltérés. Ezt minél több próbálkozással (futtatással) lehetne optimalizálni. \\\\
-A \ref{fig:example_nocollision} ábrán az útvonal látható, ahol nem volt ütközés. A \ref{fig:example_collision} ábrán pedig két objektumba is ütközött. Azokat az adatokat látjuk a legendben, ahol történt az ütközés. Az első elem, hogy melyik objektumba, a másik kettő pedig, hogy mely pontokban ütközött $ (x, y) $.
+A \ref{fig:example_nocollision} ábrán az az útvonal látható, ahol nem volt ütközés. A \ref{fig:example_collision} ábrán pedig két objektumba is ütközött. Azokat az adatokat látjuk a legendben, ahol történt az ütközés. Az első elem, hogy melyik objektumba, a másik kettő pedig, hogy mely pontokban ütközött $ (x, y) $.
 
 \begin{python}
 plt.figure()
@@ -244,10 +244,10 @@ plt.show()
 
 \subsection{Végpontok eloszlása, valószínűségi grafikonok}
 
-Ebben az alpontban megvizsgáljuk, hogy különböző paraméterek esetén melyik pozícióba hány alkalommal, illetve milyen valószínűsággel juthatunk el. Legyen az alapértelmezett érték 10 000 mintaszám, tehát ennyi útvonalat fognak a függvények meghatározni. Kigyűjtöm a végpontok $ x $ és $ y $ koordinátáit 2 külön listába, ez alapján ábrázolható az értékek eloszlása.\\\\
+Ebben az alpontban megvizsgáljuk, hogy különböző paraméterek esetén melyik pozícióba hány alkalommal, illetve milyen valószínűséggel juthatunk el. Legyen az alapértelmezett érték 10 000 mintaszám, tehát ennyi útvonalat fognak a függvények meghatározni. Kigyűjtöm a végpontok $ x $ és $ y $ koordinátáit 2 külön listába, ez alapján ábrázolható az értékek eloszlása.\\\\
 Alap esetben legyen az elfordulások száma 30, kanyarodási szög -35$^{\circ}$, +35$^{\circ}$ közötti, generálás módszere relatív, a kezdőpozíció az origó (0, 0).\\\\
 Ekkor a \ref{fig:no_obstacles_histogram2d} ábrán a (30, 0) körüli pozíciók a leggyakrabbak, de ugyanúgy gyakori eset például a (-11/+10, 28), melyek 70-70 gyakorisággal fordulnak elő.\\\\
-A \ref{fig:obstacles_histogram2d} ábrán csak azokat a végpontokat látjuk, amikor nem volt egyáltalán ütközés. Ez minden esetben, 10 000 generálásnál 7000-7300 közötti rossz útvonalat számol, tehát átlagosan 2850 jó eredményből készül egy ilyen diagram. Az akadályok a \ref{fig:example_collision} vagy a \ref{fig:example_nocollision} ábrákon látható pozíciókban helyezkednek el ebben az esetben. Azt láthatjuk, hogy a leggyakoribb értékek a (12, -24/-26) pontokban lehetnek, szám szerint nagyjából 25-ször fordulnak elő. Tehát az y tengelyt tekintve inkább negatív irányba vinne minket a módszer, persze a pozitív értékeknél is léteznek útvonalak, de már csak 8-10 vagy kevesebb gyakorisággal. A világoskék színnel jelölt négyzetek is átlagban 10-szer, viszonylag gyakran fordulnak elő.
+A \ref{fig:obstacles_histogram2d} ábrán csak azokat a végpontokat látjuk, amikor egyáltalán nem volt ütközés. Ez minden esetben, 10 000 generálásnál 7000-7300 közötti rossz útvonalat számol, tehát átlagosan 2850 jó eredményből készül egy ilyen diagram. Az akadályok a \ref{fig:example_collision} vagy a \ref{fig:example_nocollision} ábrákon látható pozíciókban helyezkednek el ebben az esetben. Azt láthatjuk, hogy a leggyakoribb értékek a (12, -24/-26) pontokban lehetnek, szám szerint nagyjából 25-ször fordulnak elő. Tehát az y tengelyt tekintve inkább negatív irányba vinne minket a módszer, persze a pozitív értékeknél is léteznek útvonalak, de már csak 8-10 vagy kevesebb gyakorisággal. A világoskék színnel jelölt négyzetek is átlagban 10-szer, viszonylag gyakran fordulnak elő.
 
 
 
@@ -301,7 +301,7 @@ Az A* algoritmust implementálva az útvonalkereséshez megkaphatjuk az elvárt 
 
 A célom az volt, hogy egy olyan környezetben tudjam megvalósítani a keresést, amely "végtelen", tehát nincs megadva keret, hogy milyen távolságokba juthatunk el maximum, valamint hogy manuálisan lehessen megadni az akadályok pozícióit és méreteit, ezzel a tesztelést is könnyítve. Ezen kívül maga a környezet lényegében egy Descartes-féle koordináta-rendszer, amelyben a síkban egy $ P $ pont helyzete jól behatárolható $ x $ és $ y $ rendezett számpár alapján. A megjelenítés itt is szintén a matplotlib könyvtár plot() funkciójával fog majd történni.
 
-Létre lehet hozni egy osztályt, amelyet inicializálunk az akadályokkal, ezzel kialakítva a környezetet. Ezeket egy listában tároljuk és ha szeretnénk még hozzáadni akadályokat ugyan úgy az append() funkcióval tehetjük meg. A listának tartalmaznia kell minden koordinátát, ami akadály (tehát a téglalapok keretein belül esőket is). Erre pedig egy másik függvényt hívunk meg, amely for ciklusok segítségével végigiterálva kigyjűt minden pontot az akadályokról. 
+Létre lehet hozni egy osztályt, amelyet inicializálunk az akadályokkal, ezzel kialakítva a környezetet. Ezeket egy listában tároljuk és ha szeretnénk még hozzáadni akadályokat ugyan úgy az append() funkcióval tehetjük meg. A listának tartalmaznia kell minden koordinátát, ami akadály (tehát a téglalapok keretein belül esőket is). Erre pedig egy másik függvényt hívunk meg, amely for ciklusok segítségével végigiterálva kigyűjt minden pontot az akadályokról. 
 
 \begin{python}
 import matplotlib.pyplot as plt
@@ -374,7 +374,7 @@ A megoldás másik elengedhetetlen funkciója, a szomszédos koordináták megha
 
 \newpage
 
-Ehhez létre tunuk hozni egy függvényt, ami az aktuális pozíciót megkapja paraméterként. Egy listában eltárolva ezeket a szomszédos pontokat, hozzáadjuk őket egy másik listához, ami az aktuális pozíciót plusz a lehetséges szomszédokat fogja tartalmazni. 
+Ehhez létre tudunk hozni egy függvényt, ami az aktuális pozíciót megkapja paraméterként. Egy listában eltárolva ezeket a szomszédos pontokat, hozzáadjuk őket egy másik listához, ami az aktuális pozíciót plusz a lehetséges szomszédokat fogja tartalmazni. 
 
 \begin{python}
 	def get_neighbours(self, position):
@@ -567,7 +567,7 @@ draw = parking_lot.ParkingLot()
 
 \bigskip
 
-Definiáljunk négy tömböt, melynek első két paraméterével lehet a jármű méreteitt állítani, a harmadik pedig mindig 1, hogy az aktuális pozíciót adja vissza (mátrix szorzásnál vehető majd észre). Ez a négy sarkát jelenti a járműnek és az eltolások amiket megadunk, az adott tengely középpontjához mérve értendőek. Az alapértelmezett beállítás 0 radián, ekkor az autó jobbra néz, tehát az $ x $ tengely irányába. A \ref{fig:vehicle_points} ábra szemléltetné ezt a méretezést.
+Definiáljunk négy tömböt, melynek első két paraméterével lehet a jármű méreteit állítani, a harmadik pedig mindig 1, hogy az aktuális pozíciót adja vissza (mátrix szorzásnál vehető majd észre). Ez a négy sarkát jelenti a járműnek és az eltolások amiket megadunk, az adott tengely középpontjához mérve értendőek. Az alapértelmezett beállítás 0 radián, ekkor az autó jobbra néz, tehát az $ x $ tengely irányába. A \ref{fig:vehicle_points} ábra szemléltetné ezt a méretezést.
 
 \begin{figure}[h!]
 \centering
@@ -699,7 +699,7 @@ A sebesség kontrollálása következik. Színvonalasabb az animáció, ha a seb
 
 \bigskip
 
-A $ \delta $ szöget itt a $ heading\_angle $ jelöli, ami a kanyarodás függvényében változik. Az $ x $ és $ y $ pozíciókat  hozzáadom az útvonl tárolásához létrehozott tömbökhöz, majd a kirajzoláshoz megjelenítek két nyilat, melyek a kezdő és végpozíciót reprezentálják. Ez után a már bemutatott $ plot\_vehicle $ metódus segítségével kirajzolom az útvonalat és a járművet. Ha ez a $ while $ cikluson belül történik, akkor minden lépésről képet generál, és ezekből készítettem különböző esetekre .gif animációkat. Mivel linux környezetben dolgozom, ezeket a képeket egy terminálból lefuttatott paranccsal át tudtam konvertálni: convert -delay 2 -loop 0 \$(ls -1 *.png | sort -V) animation.gif
+A $ \delta $ szöget itt a $ heading\_angle $ jelöli, ami a kanyarodás függvényében változik. Az $ x $ és $ y $ pozíciókat  hozzáadom az útvonal tárolásához létrehozott tömbökhöz, majd a kirajzoláshoz megjelenítek két nyilat, melyek a kezdő és végpozíciót reprezentálják. Ez után a már bemutatott $ plot\_vehicle $ metódus segítségével kirajzolom az útvonalat és a járművet. Ha ez a $ while $ cikluson belül történik, akkor minden lépésről képet generál, és ezekből készítettem különböző esetekre .gif animációkat. Mivel linux környezetben dolgozom, ezeket a képeket egy terminálból lefuttatott paranccsal át tudtam konvertálni: convert -delay 2 -loop 0 \$(ls -1 *.png | sort -V) animation.gif
 
 \begin{python}
  	heading_angle = heading_angle + steering*dt
