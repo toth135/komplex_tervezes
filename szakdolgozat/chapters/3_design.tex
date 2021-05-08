@@ -4,35 +4,29 @@
 
 Dolgozatom részben arra fókuszál, hogy megoldást tudjon találni a jármű által bejárt út megtervezésére. Ezt lehetőleg úgy kellene megvalósítani, hogy a függvények jól paraméterezhetőek legyenek, minél kevesebb korlátozó tényezővel. A következő szempontokat kell figyelembe venni, mint célfüggvények:
 \begin{itemize}
-	\item Kétdimenziós környezet kialakítása korlátok nélküli bejárható pontokkal
-	\item Kezdő- és végpozíció paraméterezhetősége
-	\item A kanyarodások követhetőek legyenek egy jármű számára
-	\item A lehető legrövidebb útvonalon érkezés a célpozícióba
-	\item A lehető legkevesebb kanyarodás történjen az úton
-	\item Az akadályok detektálása
-	\item Az akadályok elkerülése
+	\item kétdimenziós környezet kialakítása korlátok nélküli bejárható pontokkal,
+	\item kezdő- és végpozíció paraméterezhetősége,
+	\item a kanyarodások követhetőek legyenek egy jármű számára,
+	\item a lehető legrövidebb útvonalon érkezés a célpozícióba,
+	\item a lehető legkevesebb kanyarodás történjen az úton,
+	\item az akadályok detektálása,
+	\item az akadályok elkerülése.
 \end{itemize}
-
 A felsorolt tényezőkhöz két megoldást fogok majd bemutatni és részletezni, valamint kiértékelni. Egy véletlen keresésen alapuló módszer az első kísérletem eredménye, amely valamelyest a meghatározott feltételeknek eleget tesz, de csak egy közelítése a megoldásnak. Segítségével generálni tudunk a felhasználó által meghatározott számú útvonalat, amelyek közt biztosan lesz olyan, ami reálisnak tekinthető egy jármű számára. Hátránya viszont, hogy csak a kezdőpozíció határozható meg, a célt csak közelíteni tudjuk a megfelelő paraméterezéssel. A kétdimenziós környezetben bármilyen utat be tud járni, valamint az akadályokat a véletlenszerűség miatt csak detektálni tudja, elkerülni nem. Az útvonal hossza sem minden esetben kedvező, valamint fölösleges kanyarodások is észrevehetők. Tehát ezen korlátokat tekintve ez a megoldás nem felel meg a legtöbb célfüggvénynek.
-\\\\
 
-Következő megoldásnak az A* algoritmust választottam, amely nagyjából eleget tesz a feltételeknek. A kanyarodások száma nem mindig optimális, de biztos, hogy a legrövidebb utat fogja visszaadni. A jármű által bejárt utat közelíteni tudja, irányt adhat a navigáláshoz. Itt azért csak irányadó eredmény lehetséges, mert az algoritmus egész számokkal dolgozik, tehát ilyen szempontból korlátolt a megoldás. Az akadályokat minden esetben detektálja és elkerüli, valamint biztosítva van a kezdő és végpozíció paraméterezése is. Bármekkora területet be lehet járni vele, ilyen téren nincsenek korlátok.  
+Következő megoldásnak az A*-algoritmust választottam, amely nagyjából eleget tesz a feltételeknek. A kanyarodások száma nem mindig optimális, de biztos, hogy a legrövidebb utat fogja visszaadni. A jármű által bejárt utat közelíteni tudja, irányt adhat a navigáláshoz. Itt azért csak irányadó eredmény lehetséges, mert az algoritmus egész számokkal dolgozik, tehát ilyen szempontból korlátolt a megoldás. Az akadályokat minden esetben detektálja és elkerüli, valamint biztosítva van a kezdő és végpozíció paraméterezése is. Bármekkora területet be lehet járni vele, ilyen téren nincsenek korlátok.  
 
 \Section{A jármű orientációja mozgás közben}
 
 A dolgozatomban kitérek a járművek mozgása közben fellépő pozícionálási porblémákra is. Különböző irányszögeket kell definiálni ahhoz, hogy szimulálni tudjuk a mozgási folyamatot, valamint egy sebességet, amivel majd az autó haladni tud. Ezeket egy parkolóban megfelelően lehet majd szemléltetni és a következő célfüggvényeket kell figyelembe venni:
 \begin{itemize}
-	\item A sebesség arányos definiálása
-	\item A kanyarodási szög figyelembe vétele
-	\item Kezdő- és végpozíciók irányvektorainak figyelembe vétele
-	\item Orientáció, a jármű irányba állítása
-	\item A pozíció a sebesség függvényében is változik
-	\item Ütközés detektálása parkoló autók esetén
+	\item a sebesség arányos definiálása,
+	\item a kanyarodási szög figyelembe vétele,
+	\item kezdő- és végpozíciók irányvektorainak figyelembe vétele,
+	\item orientáció, a jármű irányba állítása,
+	\item a pozíció a sebesség függvényében is változik,
+	\item ütközés detektálása parkoló autók esetén.
 \end{itemize}
-
 Ez a megoldás útvonalat tervez, viszont sokkal több szempontot venne figyelembe a tervezésen felül is. Nyomon tudná követni a jármű irányváltoztatásait az említett célfüggvények alapján és a sebesség függvényében alakulna a pálya íve is, amíg elér a célpozícióba.
-
-
-
 
 % TODO: Véletlenszerű útvonalakhoz (mint jó megoldásokhoz) generálni akadályokat, és úgy tekinteni, hogy ez az algoritmus be- és kimenetére egy-egy példát jelent.

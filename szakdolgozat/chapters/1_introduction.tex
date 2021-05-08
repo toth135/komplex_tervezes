@@ -4,14 +4,12 @@ A négykerekű járművek mozgása sokféle tudományág definícióiból határ
 
 Az egyik alapvető probléma, hogy egy jármű egyik pontból a másikba kellene, hogy eljusson. Ezt különböző algoritmusok segítségével tudjuk kivitelezni, amely valamilyen logika alapján meghatároz egy útvonalat végeredményként.
 
-Kezdésként a véletlen számok használatával juttatnám el a járművet bizonyos pontokba, és megláthatjuk, milyen paraméterek alapján mely pozíciókba juthatunk el a legnagyobb valószínűséggel. Mivel ez az eredmény még nem tekinthető optimálisnak, szükség lesz egy keresőalgoritmusra, ami eleget tesz bizonyos alapkövetelményeknek. Ez esetben az egyik fontosabb célfüggvény a legrövidebb útvonalat jelentené a két pont között.
+Kezdésként a véletlenszerű útvonalak generálásával próbálom meg a járművet bizonyos pontokba, és megvizsgálom, hogy milyen paraméterek alapján mely pozíciókba juthatunk el a legnagyobb valószínűséggel. Mivel ez az eredmény még nem tekinthető optimálisnak, szükség lesz egy keresőalgoritmusra, ami eleget tesz bizonyos alapkövetelményeknek. Ez esetben az egyik fontosabb célfüggvény a legrövidebb útvonalat jelentené a két pont között.
 
 A következő esetben egy jármű mozgását szeretném szimulálni egy parkolóban. Itt meg kell határoznunk, hogy melyik parkolóhelyről, melyik másikba álljon át az autó, valamint orral vagy háttal. Ehhez meg kell oldani, hogy a kiszámított útvonalat tudja követni a jármű. Itt a különböző irányvektorok, valamint a szögek váltakozása fog érdekes problémát adni.
 
-Mindenféle mozgás vagy útvonal tervezés a dolgozatomban kétdimenziós környezetben történik. A Descartes-féle koordinátarendszert veszem alapul a pozícionálásokhoz és az egyéb pontok meghatározásához. Így is fogom az eredményeket ábrázolni, melyek képként lesznek megjelenítve minden eset után, valamint ezeken az $ x $ és $ y $ koordináták be lesznek skálázva, így szemléltetem a pozíciót.
+Minden mozgás számítás és útvonal tervezés a dolgozatomban kétdimenziós környezetben történik. A Descartes-féle koordinátarendszert veszem alapul a pozícionálásokhoz és az egyéb pontok meghatározásához. Így is fogom az eredményeket ábrázolni, melyek képként lesznek megjelenítve minden eset után, valamint ezeken az $x$ és $y$ koordináták be lesznek skálázva, így szemléltetem a pozíciót.
 
-Végeredményként szeretnék majd a parkolós mozgásról kezdetleges animációkat bemutatni, hogy hogyan képes az adott paraméterek alapján az autó navigálni és célba érkezni. Ezeket .gif kiterjesztésű mozgókép formában szemléltetném majd, amelyek a dolgozat mappájában elérhetőek lesznek.
+Végeredményként bemutatok majd a parkolásról kezdetleges animációkat, hogy hogyan képes az adott paraméterek alapján az autó navigálni és célba érkezni. Ezeket \texttt{.gif} kiterjesztésű mozgókép formában szemléltetném majd, amelyek a dolgozat mappájában elérhetőek lesznek.
 
-Minden ilyen teszt esetet python nyelven implementáltam, ezen kódrészeket is be fogom mutatni és rögtön utána egy-egy példát is, mint futtatási eredményt kép formájában. Kitérek azokra a matematikai definíciókra is, amik alapján a kód készült. Ezeket részletesen le fogom vezetni és ábrákkal is szemléltetem a későbbiekben a definiált változókat.
-
-
+Minden ilyen vizsgálandó esetet Python programozási nyelven implementáltam. Az elkészült kódrészeket is be fogom mutatni a dolgozatban, és rögtön utána egy-egy példát, mint futtatási eredményt kép formájában. Kitérek azokra a matematikai definíciókra, amik alapján a kód készült. Ezeket részletesen le fogom vezetni és ábrákkal is szemléltetem.

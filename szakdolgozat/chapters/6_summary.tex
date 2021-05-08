@@ -1,7 +1,26 @@
 
 \Chapter{Összefoglalás}
 
-Dolgozatom a négykerekű járművek alapvető navigációs problémáit elemzi, melynek alapja az útvonalkeresés. Példákon keresztül láthattunk eredményeket különböző véletlen bolyongásos kísérletekre, amelyeket összesítettem és kiértékeltem az adott paraméterek alapján. Az A* algoritmus, mint hatékony keresési eljárás segítségével megtaláltuk a legrövidebb utat két pont között egy olyan környezetben,amit a benne található akadályokkal mi magunk alakíthatunk ki és bármilyen távolságba eljuthatunk. Majd animációkkal szemléltettem a pozícionálás problémáit haladás közben. Itt szerettem volna megoldani még az ütközésdetektálás és elkerülés prolémáját, ami sajnos továbbfejlesztési lehetőségnek maradt meg. Ennél a példánál teljesen máshogy térképezi fel a bejárandó pontokat a program, mint egy gráfszerű keresés során. Így egy üres parkolót láthatunk, a terveimben pedig parkoló autók is szerepeltek, amiket jó lett volna kikerülni a mozgás közben.
+Dolgozatom a négykerekű járművek alapvető navigációs problémáit elemzi, melynek alapja az útvonalkeresés. Példákon keresztül láthattunk eredményeket különböző véletlen bolyongásos kísérletekre, amelyeket összesítettem és kiértékeltem az adott paraméterek alapján. Az A*-algoritmus, mint hatékony keresési eljárás segítségével megtaláltuk a legrövidebb utat két pont között egy olyan környezetben,amit a benne található akadályokkal mi magunk alakíthatunk ki és bármilyen távolságba eljuthatunk. Majd animációkkal szemléltettem a pozícionálás problémáit haladás közben. Itt szerettem volna megoldani még az ütközésdetektálás és elkerülés prolémáját, ami sajnos továbbfejlesztési lehetőségnek maradt meg. Ennél a példánál teljesen máshogy térképezi fel a bejárandó pontokat a program, mint egy gráfszerű keresés során. Így egy üres parkolót láthatunk, a terveimben pedig parkoló autók is szerepeltek, amiket jó lett volna kikerülni a mozgás közben.
 
 Természetesen ezeken felül még további problémák is felmerülhetnek egy jármű navigálása közben. Például definiálni lehetne többféle algoritmust az útvonal meghatározására (kevesebb kanyarodással bejárható út, legkevesebb idő alatt megtehető út). Vagy olyan helyzetek kialakítása, ahol a jármű mérete is számít és emiatt újra kell terveznie az utat, vagy épp korrigálnia kell hátramenetbe kapcsolva.
 
+\Chapter{Summary}
+
+My thesis analyzes the basic navigation problems of four wheeled vehicles which
+basis is routesearching. We saw results of different random wandering experiments with
+picture output that I summarized and evaluated by the given parameters. We've found the 
+shortest path between two points with the help of A* algorithm in an environment that 
+we created by making obstacles. In this environment we can get to any distance. Then I 
+illustrated the problems of positioning while moving with animations. Here I also wanted
+to solve the collision detection and avoidance problem that remained as an improvement
+opportunity for the program. In this example the program maps the points to be traversed
+in a completely different way unlike during a graph based search. So we can see an empty
+parking lot instead of with parking cars. That would've been great example to avoid those
+cars.
+
+Of course there may be more problems while navigating a vehicle besides these examples I 
+wrote about. For example we would've defined several types of algorithms (to find a path
+with the minimum number of turns or find the path in the least amount of time). Or creating
+situations when the size of the vehicle also matters so it has to replan the path or has to
+correct the movmenet in reverse.
